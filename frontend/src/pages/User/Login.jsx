@@ -1,8 +1,7 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import axios from "axios";
 import { NavLink, useNavigate } from "react-router-dom";
-import { Eye, EyeOff } from "lucide-react"; // react-icon 
-// alternative
+import { Eye, EyeOff } from "lucide-react"; 
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { FaRegCircleCheck } from "react-icons/fa6";
 import { useEffect } from "react";
@@ -61,9 +60,9 @@ window.scrollTo({ top: 0, behavior: 'smooth' });
   });
 
   if(response){
-    const { accessToken, refreshToken } = response.data.tokens;
+    const { accessToken} = response.data.tokens;
 
-// Store in localStorage (or preferably in React Context/Zustand)
+
 setIsAuthenticated(true);
 localStorage.setItem("accessToken", accessToken);
 
@@ -73,10 +72,10 @@ window.location.reload();
 
   }
 
-  const message = response?.data?.message || "User Login successfull ";
+  // const message = response?.data?.message || "User Login successfull ";
   setIsSignuped(true);
-  setErrorMessage(""); // clear any previous error
-  navigate("/"); // ✅ Only redirect on success
+  setErrorMessage("");
+  navigate("/");
 } catch (error) {
   setIsLoading(false);
   setIsSignuped(false);

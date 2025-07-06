@@ -1,5 +1,5 @@
 // src/context/AuthContext.js
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import { createContext, useContext, useState, useEffect } from 'react';
 import axiosInstance from '../api/axiosInstance';
 
 const AuthContext = createContext();
@@ -31,7 +31,7 @@ export const AuthProvider = ({ children }) => {
 
     } catch (error) {
       if (!navigator.onLine) {
-        console.warn('User is offline — preserving authentication state.');
+        // console.warn('User is offline — preserving authentication state.');
         return;
       }
 
@@ -45,9 +45,9 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     checkAuth();
 
-    // Re-check authentication on network reconnect
+
     const handleReconnect = () => {
-      console.log('Reconnected — checking authentication again.');
+      // console.log('Reconnected — checking authentication again.');
       checkAuth();
     };
 
@@ -56,7 +56,7 @@ export const AuthProvider = ({ children }) => {
     return () => {
       window.removeEventListener('online', handleReconnect);
     };
-  }, []);
+  });
 
   return (
     <AuthContext.Provider

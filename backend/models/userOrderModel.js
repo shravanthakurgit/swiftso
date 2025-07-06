@@ -15,21 +15,32 @@ const userOrderSchema = new mongoose.Schema(
       type: mongoose.Schema.ObjectId,
       ref: "product",
     },
-    product_details: {
-      tname: String,
-      image: Array,
-    },
+   product_details: {
+  name: { type: String },
+  quantity: { type: Number },
+  size: { type: String },
+  image: { type: String },
+  price: { type: Number },
+  platform_Fee:{type: Number},
+  delivery_Fee:{type: Number},
+  totalAmount:{type: Number},
+   },
     payment_id: {
       type: String,
       default: "",
     },
-    payment_status: {
+    payment_Method: {
       type: String,
       default: "",
     },
     deliver_address: {
       type: mongoose.Schema.ObjectId,
       ref: "address",
+    },
+    order_status: {
+      type: String,
+      enum : ['delivered','cancelled','pending','placed','returned','refunded'],
+      default:'pending'
     },
     subTotalAmt: {
       type: Number,

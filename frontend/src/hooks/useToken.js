@@ -1,4 +1,4 @@
-// hooks/useToken.js
+
 import { useState, useEffect } from 'react';
 
 export const useToken = () => {

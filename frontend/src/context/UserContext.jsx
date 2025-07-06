@@ -8,6 +8,7 @@ const userContext = createContext();
 export const UserDetailsProvider = ({ children }) => {
   const [userData, setUserData] = useState([]);
   const [userAddress, setUserAddress] = useState([]);
+  const [selectedAddress, setSelectedAddress] = useState(null);
 
   const fetchUserDetails = async () => {
     try {
@@ -29,7 +30,7 @@ export const UserDetailsProvider = ({ children }) => {
   }, [token]);
 
   return (
-    <userContext.Provider value={{ userData, userAddress, fetchUserDetails }}>
+    <userContext.Provider value={{ userData, userAddress, fetchUserDetails, setSelectedAddress,selectedAddress }}>
       {children}
     </userContext.Provider>
   );

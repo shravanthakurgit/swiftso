@@ -1,19 +1,20 @@
 import React, { useState } from "react";
 import axios from "axios";
 import {useNavigate } from "react-router-dom";
-import { Eye, EyeOff } from "lucide-react"; // react-icon 
+import { Eye, EyeOff } from "lucide-react";  
 
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { FaRegCircleCheck } from "react-icons/fa6";
-import { useParams } from "react-router-dom";
-import { useEffect } from "react";
-import Error from "../../utils/Error";
+// import { useParams } from "react-router-dom";
+// import { useEffect } from "react";
+// import Error from "../../utils/Error";
+import { backendUrl } from "../../utils/backendUrl";
 
 
 export default function ResetPassword() {
-  const backendUrl = process.env.REACT_APP_BACKEND_URL;
-    let otp = localStorage.getItem("otp")
-    let email = localStorage.getItem("otpEmail")
+
+    const otp = localStorage.getItem("otp")
+    const email = localStorage.getItem("otpEmail")
     const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -25,10 +26,10 @@ export default function ResetPassword() {
   const navigate = useNavigate();
 
 
-  useEffect(()=>{
-otp = localStorage.getItem("otp")
-email = localStorage.getItem("otpEmail")
-  },[])
+//   useEffect(()=>{
+// otp = localStorage.getItem("otp")
+// email = localStorage.getItem("otpEmail")
+//   },[])
 
 
 
@@ -75,7 +76,7 @@ email = localStorage.getItem("otpEmail")
   }
 
   setIsFinished(true);
-  setErrorMessage(""); // clear any previous error
+  setErrorMessage("");
 
   setTimeout(() => {
         navigate(`/login`)

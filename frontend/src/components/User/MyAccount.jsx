@@ -147,7 +147,7 @@ userData && Object.keys(userData).length > 0 && token ?
         <AccountOption icon={MdReplay} label="Returns" />
         <AccountOption icon={MdCreditCard} label="Billing" />
 
-        <NavLink to='my-account/address'>
+        <NavLink to='/my-account/address'>
         
    
         <AccountOption icon={MdLocationOn} label="Address" />

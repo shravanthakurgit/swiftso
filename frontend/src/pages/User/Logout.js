@@ -1,7 +1,8 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { useAuth } from '../../context/AuthContext';
+import { backendUrl } from '../../utils/backendUrl';
 
 
 const Logout = () => {
@@ -11,7 +12,7 @@ const Logout = () => {
   useEffect(() => {
     const logoutUser = async () => {
       try {
-        await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/user/logout`, {}, {
+        await axios.post(`${backendUrl}/api/user/logout`, {}, {
           withCredentials: true,
         });
       } catch (err) {

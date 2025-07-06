@@ -4,7 +4,6 @@ import {useNavigate } from "react-router-dom";
 
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { FaRegCircleCheck } from "react-icons/fa6";
-import { useEffect } from "react";
 
 
 export default function ForgotPassword() {
@@ -41,7 +40,7 @@ export default function ForgotPassword() {
   });
 
   setIsFinished(true);
-  setErrorMessage(""); // clear any previous error
+  setErrorMessage(""); 
 
   if(response){
  localStorage.setItem("otpEmail", email);

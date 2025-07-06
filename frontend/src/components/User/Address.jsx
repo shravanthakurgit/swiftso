@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from 'react'
-import { useAuth } from '../../context/AuthContext';
+import { useEffect, useState } from 'react'
+// import { useAuth } from '../../context/AuthContext';
 import {MdHome } from 'react-icons/md';
-import { useCart } from '../../context/CartContext';
+// import { useCart } from '../../context/CartContext';
 import { useUserData } from '../../context/UserContext';
-import AddAddress from './AddAddress';
+// import AddAddress from './AddAddress';
 import EditAddress from './EditAddress';
 
 import { MdEdit } from "react-icons/md";
@@ -11,26 +11,22 @@ import { IoMdTrash } from "react-icons/io";
 // import { useUserData } from '../../context/UserContext';
 
 const Address = () => {
-   const {userAddress} = useUserData();
+   const {userAddress,selectedAddress, setSelectedAddress} = useUserData();
 
-   const {cart}=useCart();
+  //  const {cart}=useCart();
    
    const [openEdit, setOpenEdit]= useState(false);
    const [editData,setEditData] = useState({})
  
-     useEffect(()=>{
-      console.log(editData._id)
-
-     },[openEdit])
        const [selectedAddressIndex, setSelectedAddressIndex] = useState('0');
+       
  
-         useEffect(() => {
-   if (userAddress && selectedAddressIndex !== null) {
-     const selectedAddress = userAddress[selectedAddressIndex];
-     localStorage.setItem("selectedAddress", JSON.stringify(selectedAddress));
-     localStorage.setItem("selectedAddressIndex", selectedAddressIndex.toString());
-   }
- }, [userAddress, selectedAddressIndex]);
+        useEffect(() => {
+  if (selectedAddressIndex !== null) {
+    setSelectedAddress(userAddress[selectedAddressIndex]);
+  }
+}, [userAddress, selectedAddressIndex]);
+
    return (
          <div className="flex flex-col mt-2 w-full">
    {/* Address Selection */}

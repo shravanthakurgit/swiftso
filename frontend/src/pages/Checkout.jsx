@@ -1,30 +1,100 @@
-import React, { useEffect, useState } from "react";
-import { useAuth } from "../context/AuthContext";
-import {MdHome, MdPerson } from 'react-icons/md';
+import React, { useState } from "react";
+// import { useAuth } from "../context/AuthContext";
+// import {MdHome, MdPerson } from 'react-icons/md';
 import Address from "../components/User/Address";
 import AddAddress from "../components/User/AddAddress";
-import { useLocation } from "react-router-dom";
+import {useLocation, useNavigate } from "react-router-dom";
 import { BiSolidOffer } from "react-icons/bi";
-
+import { useUserData } from "../context/UserContext";
+import axiosInstance from "../api/axiosInstance";
+import { AiOutlineLoading3Quarters } from "react-icons/ai";
+import { useCart } from "../context/CartContext";
+import { toast } from "react-toastify";
 
 const Checkout = () => {
+  const navigate = useNavigate();
 
-    const {userData} = useAuth()
+  const {refreshCart} = useCart();
 const location = useLocation();
+const [loading, setLoading ] = useState(false)
 
-    const { total = 0, discount = 0, hasCoupon = false, itemCount=0 } = location.state || {};
 
-//       const [selectedAddressIndex, setSelectedAddressIndex] = useState('0');
+  const { selectedAddress} = useUserData();
 
-//         useEffect(() => {
-//   if (userData?.address && selectedAddressIndex !== null) {
-//     const selectedAddress = userData.address[selectedAddressIndex];
-//     localStorage.setItem("selectedAddress", JSON.stringify(selectedAddress));
-//     localStorage.setItem("selectedAddressIndex", selectedAddressIndex.toString());
-//   }
-// }, [userData, selectedAddressIndex]);
+    const { total = 0, hasCoupon = false, itemCount=0, cartList =[], coupon=null } = location.state || {};
+
+
+
+    const[isCash,setIsCash] = useState(false)
+
+    const handleProceed = () => {
+  if (!selectedAddress) {
+    toast.warn("Please select a delivery address", {
+      position: "top-center",
+      autoClose: 2000,
+    });
+    return;
+  }
+
+  if (!isCash) {
+    toast.warn("Please select a payment method", {
+      position: "top-center",
+      autoClose: 2000,
+    });
+    return;
+  }
+
+  handleCashMethod(); 
+};
+
+    const handleCashMethod = async ()=>{
+      try {
+
+        const payload ={
+          itemList: cartList,
+          address_id: selectedAddress._id,
+          totalAmount: total,
+          couponCode: coupon,
+
+
+        }
+        console.log(payload)
+      setLoading(true)
+        const response = await axiosInstance.post('/api/order/cash-on-delivery', payload,{withCredentials:true})
+
+        if(response){
+          await refreshCart();
+          setLoading(false)
+          navigate('/my-orders')
+
+        }
+      } catch (error) {
+        alert(error)
+      }
+    }
+
+    // const handleOnlineMethod = async ()=>{
+    //   try {
+
+        
+    //   } catch (error) {
+        
+    //   }
+    // }
+
+
   return (
+    
     <section>
+
+    {loading && (
+             <div className=" fixed text-center text-white font-semibold inset-0 z-50 bg-blue-200 bg-opacity-50 flex justify-center items-center ">
+               <div className="absolute flex justify-center items-center gap-4 bg-blue-600 p-4 text-white rounded top-[36%]">Processing Order. Please wait.. <AiOutlineLoading3Quarters className='animate-spin' /></div>
+             </div>
+           )}
+      
+
+      
       <div className="flex flex-col-reverse sm:flex-row gap-6">
 
 
@@ -102,8 +172,36 @@ const location = useLocation();
     <p className="flex justify-between px-6 bg-black bg-opacity-10 monst font-semibold p-2  rounded text-black">Total Amount: <span>₹ {total}</span></p>
     
      </div>
+
+     <div className="flex flex-col mx-auto w-full items-center text-left mt-10 gap-3 ">
+      <h2 className="text-left w-[90%] font-semibold poppins linkc">Choose Payment Method</h2>
+      <button className={` w-[90%] flex items-center p-2 border rounded hover:shadow transition-all text-left flex-1 relative  cursor-pointer text-sm bg-blue-600 text-white font-semibold monst tracking-wide`} >Online Payment</button>
+    <label
+  htmlFor="CashOnDelivery"
+  className={`w-[90%] flex items-center p-2 border rounded-sm hover:shadow transition-all text-left flex-1 relative cursor-pointer text-sm 
+    ${isCash ? 'bg-green-100 text-green-600' : 'bg-white text-black'}
+  `}
+>
+  <input
+    type="checkbox"
+    id="CashOnDelivery"
+    name="Cash"
+    value="Cash"
+    checked={isCash}
+    onChange={(e) => setIsCash(e.target.checked)}
+    className="mr-3 accent-blue-600 rounded-full cursor-pointer text-black"
+  />
+  <span className="w-full text-center font-semibold monst">Cash on Delivery</span>
+</label>
+
+     </div>
      
-<button className="bg-[var(--primary)] p-2 monst font-semibold border border-yellow-500 rounded-sm mt-4 w-[90%] mx-auto">Proceed To Pay</button>
+<button
+  className="bg-[var(--primary)] p-2 monst font-semibold border border-yellow-500 rounded-sm mt-4 w-[90%] mx-auto"
+  onClick={handleProceed}
+>
+  Proceed To Pay
+</button>
         </div>
 
 

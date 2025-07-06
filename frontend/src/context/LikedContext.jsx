@@ -1,4 +1,4 @@
-import React, { createContext, useState, useEffect, useContext } from "react";
+import { createContext, useState, useEffect} from "react";
 import axiosInstance from "../api/axiosInstance";
 import { useAuth } from "./AuthContext";
 
@@ -16,7 +16,7 @@ useEffect(() => {
         withCredentials: true,
       });
 
-      const likedArray = res.data.likedProducts; // Assuming array of likedProduct documents
+      const likedArray = res.data.likedProducts; 
       const mapped = {};
 
       for (const liked of likedArray) {
@@ -39,23 +39,23 @@ useEffect(() => {
   useEffect(() => {
     const stored = JSON.parse(localStorage.getItem("likedItems")) || {};
     setLikedItems(stored);
-  }, []);
+  },[]);
 
 
   useEffect(() => {
   const syncLikedItems = async () => {
     try {
       await axiosInstance.post('/api/product/sync-liked', { likedItems },{withCredentials:true});
-      console.log("Synced liked items to backend.");
+     
     } catch (err) {
-      console.error("Failed to sync liked items:", err);
+    return
     }
   };
 
   if (isAuthenticated && Object.keys(likedItems).length > 0) {
     syncLikedItems();
   }
-}, [isAuthenticated]);
+}, [isAuthenticated,likedItems]);
 
 
   const toggleLike = async (productId) => {

@@ -8,6 +8,8 @@ import couponRouter from './routes/couponRoutes.js';
 import dotenv from 'dotenv';
 import cookieParser from 'cookie-parser';
 import cartRouter from './routes/cartRouter.js';
+import orderRouter from './routes/orderRouter.js';
+import path from 'path';
 
 
 dotenv.config();
@@ -28,7 +30,12 @@ connectCloudinary();
 const allowedOrigins = [
   process.env.FRONTEND_URL ,
   process.env.ADMIN_FRONTEND_URL,
+  process.env.PUBLIC_PORT,
+
+ 
 ];
+
+app.use('/invoices', express.static(path.join(process.cwd(), 'invoices')));
 
 app.use(cors({
   origin: function (origin, callback) {
@@ -57,6 +64,7 @@ app.use('/api/user', userRouter);
 app.use('/api/coupons', couponRouter);
 app.use('/api/product', productRouter);
 app.use('/api/cart', cartRouter);
+app.use('/api/order', orderRouter);
 
 // Root
 app.get('/', (req, res) => {

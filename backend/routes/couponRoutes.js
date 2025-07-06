@@ -43,7 +43,7 @@ couponRouter.post('/apply', async (req, res) => {
       return res.status(400).json({ valid: false, message: 'Coupon expired!' });
     }
 
-    if (coupon.minCartValue && cartTotal < coupon.minCartValue) {
+    if (coupon.minCartValue  && cartTotal < coupon.minCartValue) {
       return res.status(400).json({
         valid: false,
         message: `Minimum cart value should be ₹${coupon.minCartValue}`,

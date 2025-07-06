@@ -1,15 +1,14 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { NavLink, useNavigate } from "react-router-dom";
-import { Eye, EyeOff, MailCheck } from "lucide-react"; // react-icon 
-// alternative
+import { Eye, EyeOff, MailCheck } from "lucide-react"; 
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { FaRegCircleCheck } from "react-icons/fa6";
 import { useEffect } from "react";
+import { backendUrl } from "../../utils/backendUrl";
 
 
 export default function SignUp() {
-  const backendUrl = process.env.REACT_APP_BACKEND_URL;
   const navigate = useNavigate();
  
 
@@ -36,9 +35,8 @@ export default function SignUp() {
 
   useEffect(() => {
      
-      // ✅ If accessToken exists, redirect away from login
       if (token) {
-        navigate("/"); // redirect to home or dashboard
+        navigate("/");
       }
     }, [token, navigate]);
 
@@ -70,9 +68,9 @@ export default function SignUp() {
 
   
 
-  const message = response?.data?.message || "User registered successfully";
+  // const message = response?.data?.message || "User registered successfully";
   setIsSignuped(true);
-  setErrorMessage(""); // clear any previous error
+  setErrorMessage("");
   
   await new Promise((resolve) => {
   setTimeout(() => {
@@ -84,14 +82,14 @@ export default function SignUp() {
 if(response){
     const { accessToken, refreshToken } = response.data.tokens;
 
-// Store in localStorage (or preferably in React Context/Zustand)
+
 
 localStorage.setItem("accessToken", accessToken);
 localStorage.setItem("refreshToken", refreshToken);
 
   }
 
-  navigate("/"); // ✅ Only redirect on success
+  navigate("/"); 
 } catch (error) {
   setIsLoading(false);
   setIsSignuped(false);

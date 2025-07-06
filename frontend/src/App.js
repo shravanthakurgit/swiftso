@@ -1,6 +1,6 @@
-import logo from "./logo.svg";
+// import logo from "./logo.svg";
 import "./App.css";
-import { ThemeProvider } from "@material-tailwind/react";
+// import { ThemeProvider } from "@material-tailwind/react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import HomePage from "./pages/HomePage/HomePage";
 import ProductDetails from "./components/ProductDetail/ProductDetails";
@@ -13,7 +13,7 @@ import Cart from "./components/Cart/Cart";
 import MyAccount from "./components/User/MyAccount";
 import Login from "./pages/User/Login";
 import VerifyEmail from "./pages/VerifyEmail";
-import { toast, ToastContainer } from "react-toastify";
+import {ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import SignUp from "./pages/User/Signup";
 import ForgotPassword from "./pages/User/ForgotPassword";
@@ -24,16 +24,16 @@ import ProductSearch from "./components/SerachProduct/Search";
 import PrivateRoute from "./PrivateRoute";
 import { useAuth } from "./context/AuthContext";
 import { useEffect } from "react";
-// import { refreshAccessToken } from "./auth/authService";
-
 import { setupInterceptors } from "./api/axiosInstance";
 import UpdateUser from "./pages/User/Profile/UpdateUser";
 import Checkout from "./pages/Checkout";
+import OrderDetails from "./pages/User/OrderDetails";
+import Address from "./components/User/Address";
 
 
 function App() {
 
-    const { isAuthenticated, setIsAuthenticated } = useAuth();
+    const { setIsAuthenticated } = useAuth();
 
   useEffect(() => {
     setupInterceptors(setIsAuthenticated);
@@ -59,6 +59,13 @@ function App() {
           <Route path="/liked" element={
              <PrivateRoute>
  <LikedItems />
+            </PrivateRoute>
+            
+            
+            } />
+               <Route path="/order-details" element={
+             <PrivateRoute>
+ < OrderDetails/>
             </PrivateRoute>
             
             
@@ -100,6 +107,15 @@ function App() {
             element={
               <PrivateRoute>
                 <Checkout/>
+              </PrivateRoute>
+            }
+          />
+
+             <Route
+            path="/my-account/address"
+            element={
+              <PrivateRoute>
+                <Address/>
               </PrivateRoute>
             }
           />

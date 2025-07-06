@@ -268,6 +268,8 @@ const items = cart.map(item => ({
       discount: discountValue,
       hasCoupon: isValid,
       itemCount: totalCartQuantity,
+      cartList : cart,
+      coupon: couponCode,
     }
   })}
   className="bg-blue-600 w-full p-2 text-white text-center cursor-pointer font-semibold mt-6 rounded monst border-[1.5px] border-white shadow-lg"

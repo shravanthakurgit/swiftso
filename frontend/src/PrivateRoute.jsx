@@ -4,7 +4,7 @@ import { useAuth } from './context/AuthContext';
 
 
 const PrivateRoute = ({ children }) => {
-  const { isAuthenticated, isLoading } = useAuth(); // From context
+  const { isAuthenticated, isLoading } = useAuth(); 
 
   if (isLoading) return <div>Loading...</div>;
 

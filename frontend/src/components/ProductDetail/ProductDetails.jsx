@@ -173,7 +173,7 @@ const handleAddToCart = async () => {
     name: productData.name,
     price: selectedVariant.price || productData.price,
     category: productData.category,
-    subCategory: slugify(`${productData.name} ${productData.subCategory}`),
+    subCategory: productData.subCategory,
     quantity: 1,
     image: productData.images?.[0],
     size: selectedVariant.size,

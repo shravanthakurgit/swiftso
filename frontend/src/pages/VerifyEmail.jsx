@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useSearchParams } from 'react-router-dom';
+import { backendUrl } from '../utils/backendUrl';
 
 const VerifyEmail = () => {
   const [message, setMessage] = useState('');
   const [searchParams] = useSearchParams();
   const code = searchParams.get('code');
 
-  const backendUrl = process.env.REACT_APP_BACKEND_URL || 'http://localhost:5000'; // or your actual backend URL
+
 
   useEffect(() => {
     const verifyEmail = async () => {

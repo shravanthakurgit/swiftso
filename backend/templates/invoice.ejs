@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Invoice Receipt</title>
+  <style>
+    html { font-size: 67.2%; }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      padding: 40px;
+      background: #f9f9f9;
+      color: #000000;
+    }
+    .invoice-box {
+      background: #fff;
+      padding: 30px;
+      max-width: 800px;
+      margin: auto;
+    }
+    h1 { text-align: center; color: #000000; }
+    .meta, .billing {
+      margin-top: 5px;
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+    }
+    .section-title {
+      font-weight: bold;
+      margin-bottom: 5px;
+      text-transform: uppercase;
+      color: #000000;
+      text-align: left;
+    }
+    .meta div, .billing div {
+      width: 100%;
+      margin-bottom: 10px;
+    }
+    table {
+      width: 100%;
+      margin-top: 30px;
+      border-collapse: collapse;
+    }
+    th {
+      background: #f0f0f0;
+      text-align: left;
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 12px;
+    }
+    tfoot td {
+      font-weight: bold;
+      background: #f9f9f9;
+    }
+    .flex {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: start;
+      text-align:left;
+      gap:5px;
+    }
+    .swiftso {
+      text-align: center;
+      margin-top:40px;
+      font-size: 12px;
+    }
+  </style>
+</head>
+<body>
+  <div class="invoice-box">
+    <h1>Invoice Receipt</h1>
+
+    <div class="meta">
+      <div class="flex">
+        <span class="section-title">Payment ID:</span> <span><%= paymentId %></span>
+      </div>
+      <div class="flex">
+        <span class="section-title">Payment Method:</span> <span><%= payment_method %></span>
+      </div>
+      <div class="flex">
+        <span class="section-title">Order Date:</span> <span><%= date %></span>
+      </div>
+      <div class="flex">
+        <span class="section-title">Invoice Date:</span> <span><%= invoice_date %></span>
+      </div>
+    </div>
+
+    <div class="billing">
+      <div class="flex">
+        <span class="section-title">Customer:</span>
+        <span><%= customerName %></span>
+      </div>
+      <div>
+        <div class="section-title">Billing Address:</div>
+        <div>
+          <%= billing_address.name %><br>
+          <%= billing_address.address %>
+          <% if (billing_address.address_2) { %>, <%= billing_address.address_2 %><% } %><br>
+          <% if (billing_address.landmark) { %><%= billing_address.landmark %><br><% } %>
+          <%= billing_address.city %>, <%= billing_address.state %>, <%= billing_address.country %> - <%= billing_address.pincode %><br>
+          Phone: <%= billing_address.phone %><br>
+          <% if (billing_address.email) { %>Email: <%= billing_address.email %><br><% } %>
+        </div>
+      </div>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Item</th>
+          <th>Quantity</th>
+          <th>Price</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% items.forEach(item => { %>
+          <tr>
+            <td><%= item.name %></td>
+            <td><%= item.quantity %></td>
+            <td>₹<%= item.price %></td>
+          </tr>
+        <% }) %>
+      </tbody>
+      <tfoot>
+        <tr>
+          <td colspan="2">Subtotal</td>
+          <td>₹<%= subTotal %></td>
+        </tr>
+        <% if (platformFee >= 0) { %>
+        <tr>
+          <td colspan="2">Platform Fee</td>
+          <td>₹<%= platformFee %></td>
+        </tr>
+        <% } %>
+        <% if (deliveryFee >= 0) { %>
+        <tr>
+          <td colspan="2">Delivery Fee</td>
+          <td>₹<%= deliveryFee %></td>
+        </tr>
+        <% } %>
+        <% if (discountAmount >= 0) { %>
+        <tr>
+          <td colspan="2">Discount</td>
+          <td>- ₹<%= discountAmount %></td>
+        </tr>
+        <% } %>
+        <tr>
+          <td colspan="2">Total</td>
+          <td>₹<%= total %></td>
+        </tr>
+      </tfoot>
+    </table>
+
+    <div class="swiftso">Thanks For Shopping @SwiftSo</div>
+  </div>
+</body>
+</html>
