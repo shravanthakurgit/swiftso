@@ -21,7 +21,7 @@ export const CartProvider = ({ children }) => {
   const fetchCart = async () => {
     if (isAuthenticated) {
       try {
-        const res = await axiosInstance.get('/api/cart/get-cart', {
+        const res = await axiosInstance.post('/api/cart/get-cart', {
           withCredentials: true,
         });
         setCart(res.data.cart || []);

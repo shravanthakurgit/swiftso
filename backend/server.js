@@ -59,15 +59,17 @@ app.use(cookieParser());
 
 // app.use(bodyParser.json()); // Parse application/json
 // app.use(bodyParser.urlencoded({ extended: true })); // Parse application/x-www-form-urlencoded
-const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000,  // 15 minutes
-  max: 100,                  // Limit each IP to 100 requests per window
-  message: 'Too many requests from this IP, please try again later.',
-  standardHeaders: true,    // Return rate limit info in headers
-  legacyHeaders: false,     // Disable the `X-RateLimit-*` headers
-});
 
-app.use('/api/', limiter);
+// const limiter = rateLimit({
+//   windowMs: 10 * 60 * 1000,  
+//   max: 150,                 
+//   message: 'Too many requests from this IP, please try again later.',
+//   standardHeaders: true,   
+//   legacyHeaders: false,     
+// });
+
+// app.use('/api/', limiter);
+
 // Routes
 app.use('/api/user', userRouter);
 app.use('/api/coupons', couponRouter);

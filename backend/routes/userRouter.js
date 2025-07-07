@@ -17,10 +17,10 @@ userRouter.put('/update-user',auth, updateUserDetails)
 userRouter.post('/forgot-password',forgotPassword)
 userRouter.post('/verify-otp',verifyOTP)
 userRouter.post('/reset-password',resetPassword)
-userRouter.get("/profile", auth, getUserDetails);
+userRouter.post("/profile", auth, getUserDetails);
 userRouter.post("/add-address",auth, addAddress);
 userRouter.put("/edit-address",auth, editAddress);
-userRouter.get('/get-users', authAdmin, getUser)
+userRouter.post('/get-users', authAdmin, getUser)
 userRouter.post('/refresh-token',refreshToken)
 
 export default userRouter;

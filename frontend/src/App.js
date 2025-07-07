@@ -41,10 +41,14 @@ function App() {
     setupInterceptors(setIsAuthenticated, setRateLimitError); // pass 2nd param
   }, [setIsAuthenticated]);
 
+  if(rateLimitError){
+    return <FullScreenError />
+  }
+
   
   return (
     <div className="App">
-         {rateLimitError && <FullScreenError />}
+         
       <ToastContainer />
       <BrowserRouter>
         <Header />

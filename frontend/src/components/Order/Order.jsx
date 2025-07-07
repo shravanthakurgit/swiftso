@@ -8,7 +8,7 @@ const Order = () => {
 
   const fetchOrder = async () => {
     try {
-      const response = await axiosInstance.get("/api/order/get-orders", {
+      const response = await axiosInstance.post("/api/order/get-orders", {
         withCredentials: true,
       });
       if (response?.data?.orderList) {

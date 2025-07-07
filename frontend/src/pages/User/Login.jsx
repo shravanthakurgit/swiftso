@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import axios from "axios";
 import { NavLink, useNavigate } from "react-router-dom";
 import { Eye, EyeOff } from "lucide-react"; 
@@ -6,6 +6,7 @@ import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { FaRegCircleCheck } from "react-icons/fa6";
 import { useEffect } from "react";
 import { useAuth } from "../../context/AuthContext";
+import { LikedContext } from "../../context/LikedContext";
 
 
 
@@ -16,6 +17,8 @@ export default function Login() {
   const token = localStorage.getItem("accessToken");
   const backendUrl = process.env.REACT_APP_BACKEND_URL;
   const navigate = useNavigate();
+
+  const {fetchUserLikes}= useContext(LikedContext)
 
  
   const [email, setEmail] = useState("");
@@ -55,11 +58,14 @@ window.scrollTo({ top: 0, behavior: 'smooth' });
   try {
   setIsLoading(true);
 
+
+
   const response = await axios.post(`${backendUrl}/api/user/login`, payload, {
     withCredentials: true,
   });
 
   if(response){
+    await fetchUserLikes();
     const { accessToken} = response.data.tokens;
 
 

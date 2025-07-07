@@ -5,7 +5,7 @@ import { cashOnDelivery, getOrders, getSingleOrder, updateStatus } from "../cont
 const orderRouter = Router();
 
 orderRouter.post('/cash-on-delivery',auth, cashOnDelivery)
-orderRouter.get('/get-orders',auth, getOrders)
+orderRouter.post('/get-orders',auth, getOrders)
 orderRouter.post('/get-order-details',auth, getSingleOrder)
 orderRouter.put('/update-status',auth, updateStatus)
 

@@ -1,4 +1,4 @@
-import { createContext, useState, useEffect} from "react";
+import { createContext, useState, useEffect, useRef } from "react";
 import axiosInstance from "../api/axiosInstance";
 import { useAuth } from "./AuthContext";
 
@@ -6,73 +6,72 @@ export const LikedContext = createContext();
 
 export const LikedProvider = ({ children }) => {
   const [likedItems, setLikedItems] = useState({});
-  const { isAuthenticated } = useAuth(); 
+  const { isAuthenticated } = useAuth();
+  const hasFetched = useRef(false); // to prevent double fetch on reload
 
+  
+  useEffect(() => {
+    const stored = localStorage.getItem("likedItems");
+    if (stored) {
+      setLikedItems(JSON.parse(stored));
+    }
+  }, []);
 
-useEffect(() => {
-  const fetchUserLikes = async () => {
-    try {
-      const res = await axiosInstance.get("/api/product/user-liked", {
-        withCredentials: true,
-      });
+  
 
-      const likedArray = res.data.likedProducts; 
-      const mapped = {};
+    const fetchUserLikes = async () => {
+      try {
+        const res = await axiosInstance.post("/api/product/user-liked", {
+          withCredentials: true,
+        });
 
-      for (const liked of likedArray) {
-        mapped[liked.productId] = true;
+        const likedArray = res.data.likedProducts || [];
+        const mapped = {};
+
+        for (const liked of likedArray) {
+          mapped[liked.productId] = true;
+        }
+
+        setLikedItems(mapped);
+        localStorage.setItem("likedItems", JSON.stringify(mapped));
+        hasFetched.current = true;
+      } catch (error) {
+        return
       }
+    };
 
-      setLikedItems(mapped);
-      localStorage.setItem("likedItems", JSON.stringify(mapped));
-    } catch (error) {
-      console.error("Failed to fetch user liked products:", error);
-    }
-  };
+ 
+    const syncLikedItems = async () => {
+      if (!isAuthenticated || Object.keys(likedItems).length === 0) return;
 
-  if (isAuthenticated) {
-    fetchUserLikes();
-  }
-}, [isAuthenticated]);
+      try {
+        await axiosInstance.post(
+          "/api/product/sync-liked",
+          { likedItems },
+          { withCredentials: true }
+        );
+      } catch (err) {
+      return
+      }
+    };
 
-
-  useEffect(() => {
-    const stored = JSON.parse(localStorage.getItem("likedItems")) || {};
-    setLikedItems(stored);
-  },[]);
-
-
-  useEffect(() => {
-  const syncLikedItems = async () => {
-    try {
-      await axiosInstance.post('/api/product/sync-liked', { likedItems },{withCredentials:true});
-     
-    } catch (err) {
-    return
-    }
-  };
-
-  if (isAuthenticated && Object.keys(likedItems).length > 0) {
-    syncLikedItems();
-  }
-}, [isAuthenticated,likedItems]);
-
-
+ 
   const toggleLike = async (productId) => {
     const updated = {
       ...likedItems,
       [productId]: !likedItems[productId],
     };
 
-  
     setLikedItems(updated);
     localStorage.setItem("likedItems", JSON.stringify(updated));
 
-   
     if (isAuthenticated) {
       try {
-        await axiosInstance.post("/api/product/toggle-like", { productId },{withCredentials:true});
-        console.log("Backend like toggled for:", productId);
+        await axiosInstance.post(
+          "/api/product/toggle-like",
+          { productId },
+          { withCredentials: true }
+        );
       } catch (error) {
         console.error("Failed to toggle like on backend:", error);
       }
@@ -80,7 +79,7 @@ useEffect(() => {
   };
 
   return (
-    <LikedContext.Provider value={{ likedItems, toggleLike }}>
+    <LikedContext.Provider value={{ likedItems,syncLikedItems, toggleLike,fetchUserLikes}}>
       {children}
     </LikedContext.Provider>
   );

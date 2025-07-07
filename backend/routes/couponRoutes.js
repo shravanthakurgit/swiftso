@@ -24,7 +24,6 @@ couponRouter.post('/apply', async (req, res) => {
       return res.status(400).json({ message: 'Coupon code and cart items are required. ' });
     }
 
-    // Calculating actual cart total and quantity securely
     let cartTotal = 0;
     let totalQuantity = 0;
 
@@ -57,7 +56,7 @@ couponRouter.post('/apply', async (req, res) => {
       });
     }
 
-    // Special fixed-price offer (e.g., "Buy any 3 for ₹399")
+    
     if (coupon.buyAny === true && totalQuantity <= coupon.maxCartQuantity) {
       return res.json({
         valid: true,

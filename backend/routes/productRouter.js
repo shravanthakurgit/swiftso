@@ -42,14 +42,14 @@ productRouter.post('/add-review',auth, addReview);
 productRouter.post('/remove-review',auth, removeReview);
 
 // Get list of all products
-productRouter.get('/list', listProducts);
+productRouter.post('/list', listProducts);
 
 // Get a single product (by ID or slug)
-productRouter.get('/single', singleProduct);
-productRouter.get('/search', searchProduct);
+productRouter.post('/single', singleProduct);
+productRouter.post('/search', searchProduct);
 productRouter.post('/toggle-like',auth, toggleLike);
 productRouter.post('/sync-liked',auth, syncLikes);
-productRouter.get('/user-liked',auth, getUserLikedProducts);
+productRouter.post('/user-liked',auth, getUserLikedProducts);
 
 productRouter.put('/update', upload.fields([
   { name: 'image1', maxCount: 1 },
