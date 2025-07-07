@@ -1,5 +1,5 @@
 // src/context/AuthContext.js
-import { createContext, useContext, useState, useEffect } from 'react';
+import { createContext, useContext, useState, useEffect, useRef } from 'react';
 import axiosInstance from '../api/axiosInstance';
 
 const AuthContext = createContext();
@@ -9,6 +9,7 @@ export const AuthProvider = ({ children }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [userData, setUserData] = useState(null || []);
   const [userAddress, setUserAddress] = useState(null || []);
+  
 
   const accessToken = localStorage.getItem('accessToken');
 
@@ -42,21 +43,25 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  useEffect(() => {
+const didCheck = useRef(false);
+
+useEffect(() => {
+  if (didCheck.current) return;
+  didCheck.current = true;
+
+  checkAuth();
+
+  const handleReconnect = () => {
     checkAuth();
+  };
 
+  window.addEventListener('online', handleReconnect);
 
-    const handleReconnect = () => {
-      // console.log('Reconnected — checking authentication again.');
-      checkAuth();
-    };
+  return () => {
+    window.removeEventListener('online', handleReconnect);
+  };
+}, []);
 
-    window.addEventListener('online', handleReconnect);
-
-    return () => {
-      window.removeEventListener('online', handleReconnect);
-    };
-  });
 
   return (
     <AuthContext.Provider

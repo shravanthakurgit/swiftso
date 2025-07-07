@@ -23,25 +23,28 @@ import Logout from "./pages/User/Logout";
 import ProductSearch from "./components/SerachProduct/Search";
 import PrivateRoute from "./PrivateRoute";
 import { useAuth } from "./context/AuthContext";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { setupInterceptors } from "./api/axiosInstance";
 import UpdateUser from "./pages/User/Profile/UpdateUser";
 import Checkout from "./pages/Checkout";
 import OrderDetails from "./pages/User/OrderDetails";
 import Address from "./components/User/Address";
+import FullScreenError from "./utils/FullScreenError";
 
 
 function App() {
 
-    const { setIsAuthenticated } = useAuth();
+   const { setIsAuthenticated } = useAuth();
+  const [rateLimitError, setRateLimitError] = useState(false); // NEW
 
   useEffect(() => {
-    setupInterceptors(setIsAuthenticated);
+    setupInterceptors(setIsAuthenticated, setRateLimitError); // pass 2nd param
   }, [setIsAuthenticated]);
 
   
   return (
     <div className="App">
+         {rateLimitError && <FullScreenError />}
       <ToastContainer />
       <BrowserRouter>
         <Header />

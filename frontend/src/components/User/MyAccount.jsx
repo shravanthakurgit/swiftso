@@ -1,17 +1,17 @@
 import { QuestionMarkCircleIcon } from '@heroicons/react/24/outline';
-import axios from 'axios';
-import { ArrowBigRight, ArrowRightIcon, LogOut } from 'lucide-react';
-import React, { useState, useEffect } from 'react';
-import { FaCircleArrowRight, FaRegWindowRestore } from 'react-icons/fa6';
-import { MdEmail, MdHome, MdPerson } from 'react-icons/md';
+// import axios from 'axios';
+// import { ArrowBigRight, ArrowRightIcon, LogOut } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { FaCircleArrowRight} from 'react-icons/fa6';
+// import { MdEmail, MdHome, MdPerson } from 'react-icons/md';
 import {
   MdFavoriteBorder,
   MdShoppingBag,
   MdReplay,
   MdCreditCard,
   MdLocationOn,
-  MdLocalOffer,
-  MdLocalShipping,
+  // MdLocalOffer,
+  // MdLocalShipping,
   MdLiveHelp,
   MdHelp,
   MdSettings,
@@ -65,9 +65,8 @@ navigate('/logout')
 
 useEffect(() => {
 const isOnline = navigator.onLine;
-console.log("User is online?", isOnline); // true or false
+// console.log("User is online?", isOnline); // true or false
 
-  console.log("My Account Data", token)
   if (showLogoutAlert) {
     document.body.style.overflow = "hidden"; 
   } else {
@@ -82,7 +81,7 @@ console.log("User is online?", isOnline); // true or false
 
 
 
-  const selectedAddress = userData?.address?.[selectedAddressIndex];
+  // const selectedAddress = userData?.address?.[selectedAddressIndex];
 
 
 
