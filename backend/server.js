@@ -24,7 +24,7 @@ connectCloudinary();
 
 // Middleware
 const allowedOrigins = [
-  process.env.FRONTEND_URL ,
+  process.env.FRONTEND_URL,
   process.env.ADMIN_FRONTEND_URL,
   process.env.PUBLIC_PORT,
 
@@ -74,9 +74,10 @@ app.use('/api/order', orderRouter);
 
 // Root
 app.get('/', (req, res) => {
-  res.send("API is working!");
+  res.send("API is working!" + process.env.FRONTEND_URL);
 });
 
 app.listen(port, () => {
   console.log(`Server started successfully on port ${port}`);
+  console.log(process.env.FRONTEND_URL)
 });
