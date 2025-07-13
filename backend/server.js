@@ -19,8 +19,7 @@ const app = express();
 const port = process.env.PORT || 5000;
 
 // Database & Cloudinary
-connectDB();
-connectCloudinary();
+
 
 // Middleware
 const allowedOrigins = [
@@ -80,4 +79,6 @@ app.get('/', (req, res) => {
 app.listen(port, () => {
   console.log(`Server started successfully on port ${port}`);
   console.log(process.env.FRONTEND_URL)
+  connectDB();
+connectCloudinary();
 });
