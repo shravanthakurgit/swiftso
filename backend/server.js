@@ -19,6 +19,9 @@ const port = process.env.PORT || 5000;
 
 app.set('trust proxy', 1);
 
+connectDB();
+connectCloudinary();
+
 // Middleware
 const allowedOrigins = [
   process.env.FRONTEND_URL,
@@ -74,10 +77,4 @@ app.get('/', (req, res) => {
 
 app.listen(port, async () => {
   console.log(`Express server is listening on port ${port}`);
-  try {
-    await connectDB();
-    await connectCloudinary();
-  } catch (err) {
-    console.error("Startup error:", err);
-  }
 });
