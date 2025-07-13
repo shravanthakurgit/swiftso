@@ -30,7 +30,7 @@ const Footer = () => {
 
 
                      <li className="mb-4">
-                        <NavLink to='/store'  className={({ isActive }) =>
+                        <NavLink to='/shop'  className={({ isActive }) =>
     isActive
       ? "text-blue-600 font-semibold " 
       : "hover: text-gray-700"         
