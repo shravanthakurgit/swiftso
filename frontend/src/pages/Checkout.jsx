@@ -66,7 +66,7 @@ const Checkout = () => {
       const response = await axiosInstance.post(
         "/api/order/cash-on-delivery",
         payload,
-        { withCredentials: true }
+        { withCredentials: true },  { timeout: 15000 }
       );
 
       if (response) {
