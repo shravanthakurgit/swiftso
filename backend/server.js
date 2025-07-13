@@ -72,9 +72,12 @@ app.get('/', (req, res) => {
   res.send("API is working!" + process.env.FRONTEND_URL);
 });
 
-app.listen(port, () => {
-  console.log(`Server started successfully on port ${port}`);
-  console.log(process.env.FRONTEND_URL)
-  connectDB();
-connectCloudinary();
+app.listen(port, async () => {
+  console.log(`Express server is listening on port ${port}`);
+  try {
+    await connectDB();
+    await connectCloudinary();
+  } catch (err) {
+    console.error("Startup error:", err);
+  }
 });
