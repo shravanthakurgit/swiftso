@@ -1,7 +1,18 @@
+
 import fs from 'fs';
 import path from 'path';
 import ejs from 'ejs';
-import puppeteer from 'puppeteer';
+
+
+const isProd = process.env.NODE_ENV === 'production';
+
+const puppeteer = isProd
+  ? await import('puppeteer-core')
+  : await import('puppeteer');
+
+const chromium = isProd ? await import('@sparticuz/chromium') : null;
+
+
 
 export const generateInvoice = async (data) => {
   try {
@@ -10,14 +21,16 @@ export const generateInvoice = async (data) => {
 
     const invoicesDir = path.join(process.cwd(), 'invoices');
     if (!fs.existsSync(invoicesDir)) {
-      fs.mkdirSync(invoicesDir, { recursive: true });
+      fs.mkdirSync(invoicesDir);
     }
 
-    const browser = await puppeteer.launch({
-      headless: true,
-      executablePath: puppeteer.executablePath(),
-      args: ['--no-sandbox', '--disable-setuid-sandbox']
-    });
+   const browser = await puppeteer.default.launch({
+  headless: true,
+  args: isProd ? chromium.default.args : [],
+  executablePath: isProd ? await chromium.default.executablePath() : undefined,
+  defaultViewport: isProd ? chromium.default.defaultViewport : undefined,
+});
+
 
     const page = await browser.newPage();
     await page.setContent(html, { waitUntil: 'networkidle0' });
@@ -27,7 +40,6 @@ export const generateInvoice = async (data) => {
 
     await browser.close();
     return pdfPath;
-
   } catch (err) {
     console.error("Invoice generation error:", err);
     throw err;
