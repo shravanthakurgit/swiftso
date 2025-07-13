@@ -26,7 +26,7 @@ const navigation = {
   pages: [
     { name: "HOME", href: "/", icon: RiHome5Fill },
     { name: "SHOP", href: "/shop", icon: FaStore },
-    { name: "MY ORDERs", href: "/orders", icon: BsFillBoxSeamFill },
+    { name: "MY ORDERs", href: "/my-orders", icon: BsFillBoxSeamFill },
     { name: "LIKED", href: "/liked", icon: FaRegHeart },
   ],
 };
@@ -34,7 +34,7 @@ const navigation = {
 const navigationlg = {
   pages: [
     { name: "HOME", href: "/", icon: RiHome5Fill },
-    // { name: "MY ORDERs", href: "/orders", icon: BsFillBoxSeamFill },
+    // { name: "MY ORDERs", href: "/my-orders", icon: BsFillBoxSeamFill },
     { name: "SHOP", href: "/shop", icon: FaStore },
     // { name: "MY ACCOUNT", href: "/my-account", icon: MdAccountCircle },
   ],
