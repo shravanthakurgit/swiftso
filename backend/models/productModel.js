@@ -1,6 +1,4 @@
 import mongoose from "mongoose";
-
-// Define a variant sub-schema for size + stock (and optional price override)
 const variantSchema = new mongoose.Schema(
   {
     size: {
@@ -13,7 +11,6 @@ const variantSchema = new mongoose.Schema(
       required: true,
       min: 0
     },
-    // Optional: allow price override per size
     price: {
       type: Number
     }

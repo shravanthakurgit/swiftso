@@ -1,98 +1,100 @@
-import React, { useEffect, useState } from 'react';
-import Store from '../Store/Store';
-import { backendUrl } from '../../utils/backendUrl';
-import axios from 'axios';
-import { useLocation, useNavigate } from 'react-router-dom';
-import ProductCard from '../Store/ProductCard';
+import { MagnifyingGlassIcon } from '@heroicons/react/24/outline';
+import { useState, useEffect, useRef } from 'react';
 
-export default function ProductSearch() {
-  const [query, setQuery] = useState('');
-  const [results, setResults] = useState([]);
-  const [timeoutId, setTimeoutId] = useState(null);
-  const navigate=useNavigate();
+export default function SearchBar({ productList = [], setQuery }) {
+  const [input, setInput] = useState('');
+  const [suggestions, setSuggestions] = useState([]);
+  const [showDropdown, setShowDropdown] = useState(false);
+  const containerRef = useRef(null);
 
-const [disabled, setDisabled] = useState(false);
-const location = useLocation();
-
-
- 
-
-
-  const handleKeyDown = (e) => {
-    if (e.key === 'Enter') {
-      e.preventDefault();
-       fetchProduct();
+  useEffect(() => {
+    const trimmedInput = input.trim().toLowerCase();
+    if (!trimmedInput) {
+      setSuggestions([]);
+      return;
     }
+
+    const searchWords = trimmedInput.split(/\s+/);
+
+    const filtered = productList.filter((product) => {
+      const name = product.name.toLowerCase();
+      const category = product.category?.toLowerCase() || '';
+      
+      return searchWords.every(
+        (word) => name.includes(word) || category.includes(word)
+      );
+    });
+
+    setSuggestions(filtered.slice(0, 5)); 
+  }, [input, productList]);
+
+  
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (containerRef.current && !containerRef.current.contains(e.target)) {
+        setShowDropdown(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  const handleSelect = (suggestion) => {
+    setInput(suggestion.name);
+    setShowDropdown(false);
+    setQuery(suggestion.name);
   };
 
-
-useEffect(() => {
- 
-  if (query.length < 3) return;
-
-const params = new URLSearchParams(window.location.search);
-params.set('search', query.trim());
-
-const newUrl = `${window.location.pathname}?${params.toString()}`;
-
-  const timeoutId = setTimeout(() => {
-    fetchProduct();
-  }, 400);
-
-  return () => clearTimeout(timeoutId); 
-}, [query]);
-
-
-
-const fetchProduct = async () => {
-   
-  
-       const response = await axios.get(`${backendUrl}/api/product/search`,{ params: { search: query} })
-       console.log(response)
-       if(response){
-        setResults(response.data.foundProduct)
-    
-
-       }
-       
-    }
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    setQuery(input);
+    setShowDropdown(false);
+  };
 
   return (
-    <div className="p-4">
-      <input
-        type="text"
-        value={query}
-        onChange={(e) => setQuery(e.target.value)}
-        onKeyDown={(e)=>handleKeyDown(e)}
-        disabled={disabled}
-        className="border px-4 py-2 w-full"
-        placeholder="Search products..."
-      />
+    <div ref={containerRef} className="relative w-full max-w-2xl mx-auto my-8 px-6 text-sm">
+      <form onSubmit={handleSubmit} className='flex mx-auto py-4 gap-3'>
+        <input
+          type="text"
+          className="w-full bg-gray-100 border px-4 py-2 rounded-full  focus:outline-none "
+          placeholder="Search by name or category..."
+          value={input}
+          onChange={(e) => {
+      setInput(e.target.value);
+      setShowDropdown(true);
+    }}
+    onKeyDown={(e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault(); 
+        handleSubmit(e);
+      }
+    }}
+    
+        />
 
-      <button
-        onClick={()=> fetchProduct()}
-        className="bg-blue-500 text-white px-4 py-2 mt-2"
-        disabled={disabled}
-      >
-        Search
-      </button>
+  
 
+        <button type="submit" className="bg-gray-200 px-6  text-gray-600 rounded-full"> <MagnifyingGlassIcon
+                      aria-hidden="true"
+                      className="size-4"
+                    /></button>
 
-        
-              <div className="lg:col-span-3">
+      </form>
 
- <div className="flex flex-wrap justify-center gap-1 lg:gap-3 mt-6">          {results.map((product) => (
-            <ProductCard
-              key={product._id}
-              product={product}
-              basePath="/store"
-            />
+      {showDropdown && suggestions.length > 0 && (
+        <ul className="absolute z-20 w-full bg-white border mt-1 rounded-md shadow-lg max-h-60 overflow-y-auto">
+          {suggestions.map((item) => (
+            <li
+              key={item.id}
+              className="px-4 py-2 hover:bg-blue-100 cursor-pointer"
+              onClick={() => handleSelect(item)}
+            >
+              <span className="font-medium">{item.name}</span>{' '}
+              <span className="text-sm text-gray-500">({item.category})</span>
+            </li>
           ))}
-        </div>
-                
-              </div>
-
-       
+        </ul>
+      )}
     </div>
   );
 }

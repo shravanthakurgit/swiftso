@@ -13,7 +13,7 @@ import Cart from "./components/Cart/Cart";
 import MyAccount from "./components/User/MyAccount";
 import Login from "./pages/User/Login";
 import VerifyEmail from "./pages/VerifyEmail";
-import {ToastContainer } from "react-toastify";
+import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import SignUp from "./pages/User/Signup";
 import ForgotPassword from "./pages/User/ForgotPassword";
@@ -30,67 +30,92 @@ import Checkout from "./pages/Checkout";
 import OrderDetails from "./pages/User/OrderDetails";
 import Address from "./components/User/Address";
 import FullScreenError from "./utils/FullScreenError";
-
+import NotFound from "./pages/NotFound";
+import ScrollToTop from "./utils/ScrollToTop";
+import Return from "./components/Order/Return";
 
 function App() {
-
-   const { setIsAuthenticated } = useAuth();
+  const { setIsAuthenticated } = useAuth();
   const [rateLimitError, setRateLimitError] = useState(false); // NEW
 
   useEffect(() => {
     setupInterceptors(setIsAuthenticated, setRateLimitError); // pass 2nd param
   }, [setIsAuthenticated]);
 
-  if(rateLimitError){
-    return <FullScreenError />
+  if (rateLimitError) {
+    return <FullScreenError />;
   }
 
-  
   return (
     <div className="App">
-         
       <ToastContainer />
       <BrowserRouter>
+        <ScrollToTop />
         <Header />
         <Routes>
           <Route path="/" element={<HomePage />} />
-          <Route path="/store" element={<Store />} />
+          <Route path="/shop" element={<Store />} />
+
           <Route
             path="/liked/product-details/:productCategory/:productName"
             element={<ProductDetails />}
           />
+
           <Route
-            path="/store/product-details/:productCategory/:productName"
+            path="/shop/product-details/:productCategory/:productName"
             element={<ProductDetails />}
           />
-          <Route path="/liked" element={
-             <PrivateRoute>
- <LikedItems />
-            </PrivateRoute>
-            
-            
-            } />
-               <Route path="/order-details" element={
-             <PrivateRoute>
- < OrderDetails/>
-            </PrivateRoute>
-            
-            
-            } />
-          <Route path="/my-orders" element={
-            <PrivateRoute>
-  <Order />
-            </PrivateRoute>
-          
-            
-            } />
-          <Route path="/cart" element={
-            //  <PrivateRoute>
-   <Cart />
-            // </PrivateRoute> 
-          
-            
-            } />
+
+          <Route
+            path="/shop/product-details/order/:productName"
+            element={<ProductDetails />}
+          />
+
+          <Route
+            path="/liked"
+            element={
+              <PrivateRoute>
+                <LikedItems />
+              </PrivateRoute>
+            }
+          />
+
+          <Route
+            path="/order-details"
+            element={
+              <PrivateRoute>
+                <OrderDetails />
+              </PrivateRoute>
+            }
+          />
+
+          <Route
+            path="/my-orders"
+            element={
+              <PrivateRoute>
+                <Order />
+              </PrivateRoute>
+            }
+          />
+
+          <Route
+            path="/my-account/return-orders"
+            element={
+              <PrivateRoute>
+                <Return />
+              </PrivateRoute>
+            }
+          />
+
+          <Route
+            path="/cart"
+            element={
+              //  <PrivateRoute>
+              <Cart />
+              // </PrivateRoute>
+            }
+          />
+
           <Route
             path="/my-account"
             element={
@@ -104,25 +129,25 @@ function App() {
             path="/update-user-details"
             element={
               <PrivateRoute>
-                <UpdateUser/>
+                <UpdateUser />
               </PrivateRoute>
             }
           />
 
-             <Route
+          <Route
             path="/checkout"
             element={
               <PrivateRoute>
-                <Checkout/>
+                <Checkout />
               </PrivateRoute>
             }
           />
 
-             <Route
+          <Route
             path="/my-account/address"
             element={
               <PrivateRoute>
-                <Address/>
+                <Address />
               </PrivateRoute>
             }
           />
@@ -133,13 +158,12 @@ function App() {
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/verify-otp" element={<VerifyOTP />} />
           <Route path="/reset-password" element={<ResetPassword />} />
-          <Route path="/logout" element={
-   <Logout />
-           
-            
-            } />
+          <Route path="/logout" element={<Logout />} />
           <Route path="/search" element={<ProductSearch />} />
+          <Route path="*" element={<NotFound />} />
+
         </Routes>
+        
         <Footer />
       </BrowserRouter>
     </div>

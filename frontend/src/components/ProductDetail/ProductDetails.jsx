@@ -1,4 +1,4 @@
-import { useParams } from "react-router-dom";
+
 import { useContext, useEffect, useState } from "react";
 import {
   FaCircleCheck,
@@ -11,18 +11,21 @@ import FavoriteIcon from "@mui/icons-material/Favorite";
 import { useLocation } from "react-router-dom";
 import ProductCarousel from "./ProductCarousel";
 import { useCart } from "../../context/CartContext";
-import { slugify } from "../../utils/slugify";
-
+// import { slugify } from "../../utils/slugify";
+import { TbTruckReturn } from "react-icons/tb";
 import { LikedContext } from "../../context/LikedContext";
 import ReviewForm from "../User/ReviewForm";
 
 import { FaStarHalfAlt, FaRegStar, FaTrash } from "react-icons/fa";
-import { backendUrl } from "../../utils/backendUrl";
+// import { backendUrl } from "../../utils/backendUrl";
 import axios from "axios";
 import { currentUserId, token } from "../../utils/Token";
 import Error from "../../utils/Error";
 import { useAuth } from "../../context/AuthContext";
-
+import RelatedProducts from "../Store/RelatedProducts";
+import ServiceCommitment from "../../utils/ServiceCommitment";
+import ShareProduct from "../../utils/ShareProduct";
+import ShopByCategory from "../Category/ShopByCategory";
 
 
 
@@ -91,8 +94,6 @@ const ProductDetails = () => {
   const productId = queryParams.get("id");
   const { products } = useStore();
   const backendUrl = process.env.REACT_APP_BACKEND_URL;
-
-  const {isAuthenticated} = useAuth()
 
 
   const [productData, setProductData] = useState(null);
@@ -218,7 +219,8 @@ const handleAddToCart = async () => {
     }
 
   return (
-    <div className="flex sm:flex-row flex-wrap flex-col gap-3 border-t-2 p-10 transition-opacity ease-in duration-500 justify-center m-auto">
+    <div className="flex sm:flex-row flex-wrap flex-col gap-3 border-t-2  transition-opacity ease-in duration-500 justify-center mx-auto">
+
       {isAdded && (
         <div className="  fixed text-center m-auto text-white font-semibold inset-0 z-50 bg-black bg-opacity-30 flex justify-center items-center text-xs  ">
           <div className="absolute zoom-once flex-col flex top-[34%] items-center gap-4 bg-white p-4 rounded w-60 py-8">
@@ -241,12 +243,12 @@ const handleAddToCart = async () => {
       )}
 
 
-      <div className="flex-1">
+      <div className="flex-1 p-4">
         <ProductCarousel productData={productData} />
       </div>
 
       {/* Product info */}
-      <div className="productInfo pt-4 flex-1">
+      <div className="productInfo p-4 flex-1">
         <div className="title">
           <h2 className="text-sm text-left font-semibold ">
             {productData.name}
@@ -268,7 +270,9 @@ const handleAddToCart = async () => {
         </div>
 
         {/* Stars */}
-        <div className="star flex flex-row gap-1 text-sm mt-3 bg-gray-100 w-fit p-0.5 px-1  rounded flex-wrap items-center">
+
+        <div className="flex flex-wrap items-center gap-3 mt-3 ">
+        <div className="star flex flex-row gap-1 text-sm bg-gray-100 w-fit p-0.5 px-1  rounded flex-wrap items-center">
           {renderStars(productData.rating)}
 
           {productData.rating && (
@@ -276,7 +280,15 @@ const handleAddToCart = async () => {
               {productData.rating}
             </span>
           )}
+          
         </div>
+
+         <ShareProduct productName={productData.name} />
+
+        </div>
+
+
+       
 
         {/* Size selection */}
         <div className="size mt-4 ">
@@ -307,7 +319,7 @@ const handleAddToCart = async () => {
         </div>
 
         {/* Add to Cart */}
-        <div className="mt-4 mb-6 flex flex-wrap ">
+        <div className="mt-4 mb-6 flex flex-wrap gap-3 max-w-md flex-col md:flex-row mx-auto">
 
 
           <button
@@ -328,7 +340,7 @@ const handleAddToCart = async () => {
 
           <div
             onClick={() => toggleLike(productData._id)}
-            className="flex-1 rounded ml-2 flex justify-center items-center bg-[var(--primary)] shadow-sm z-9 border border-white gap-4  px-4 monst font-semibold"
+            className="flex-1 rounded flex justify-center items-center bg-[var(--primary)] shadow-sm z-9 border border-white gap-4  px-4 monst font-semibold p-2"
           > Add To Wishlist
             {likedItems[productData._id] ? (
               <FavoriteIcon
@@ -343,20 +355,22 @@ const handleAddToCart = async () => {
         </div>
 
         {/* Description */}
-        <div className="description text-left flex flex-col gap-2 mt-4 max-w-[700px]">
+        <div className="description text-left flex flex-col gap-2 mt-4 max-w-[700px] max-h-[200px] overflow-y-scroll px-1">
           <h2 className="text-xs font-semibold">Description</h2>
           <div className="text-xs">{productData.description}</div>
         </div>
       </div>
 
-      <div className="w-full flex flex-col sm:flex-row ">
-        {/* <div className="text-white flex-1">Description</div> */}
+      <div className="w-full flex flex-col sm:flex-row p-4 ">
+        
 
-        <div className="flex-1 flex items-start flex-col">
+        <div className="flex-1 flex items-start flex-col  ">
           <h2 className="monst bg-white p-2 ">
             Review <span>{productData.reviews.length}</span>
           </h2>
-          <div className="flex flex-col w-full max-w-[550px]">
+          <div className="flex flex-col w-full max-w-[550px] gap-2 ">
+            
+      <ReviewForm productId={productData._id} />
             {productData.reviews?.map((review, index) => (
               <div
                 key={review._id}
@@ -383,9 +397,9 @@ const handleAddToCart = async () => {
 {String(review.userId._id) === String(currentUserId) && (
   <button
     onClick={() => handleRemoveReview(review._id)}
-    className=" border px-1  rounded-sm gap-2 justify-between flex items-center flex-wrap poppins text-sm font-semibold mt-2 absolute right-2 top-0  text-gray-600"
+    className="gap-2 justify-between flex items-center flex-wrap poppins text-[8px] font-semibold mt-2 absolute right-2 top-0  text-gray-700 bg-gray-200 p-1 rounded-full"
   >
-   <span className="text-[5px]">Remove Review</span>  <FaTrash/>
+   <FaTrash/>
   </button>
 )}
 
@@ -393,12 +407,30 @@ const handleAddToCart = async () => {
              
             ))}
           </div>
+         
         </div>
+
+        <div className="flex-1">
+           <ServiceCommitment/>
+        </div>
+
+
+
+  
       </div>
 
       
 
-      <ReviewForm productId={productData._id} />
+    
+
+<div className="flex justify-center items-center mx-auto w-full">  <RelatedProducts
+  currentProductId={productData._id}
+  category={productData.category} product={productData}
+/></div>
+
+<ShopByCategory/>
+
+
     </div>
   );
 };

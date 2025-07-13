@@ -56,12 +56,12 @@
       display: flex;
       flex-wrap: wrap;
       justify-content: start;
-      text-align:left;
-      gap:5px;
+      text-align: left;
+      gap: 5px;
     }
     .swiftso {
       text-align: center;
-      margin-top:40px;
+      margin-top: 40px;
       font-size: 12px;
     }
   </style>
@@ -108,8 +108,10 @@
       <thead>
         <tr>
           <th>Item</th>
-          <th>Quantity</th>
-          <th>Price</th>
+          <th>Qty</th>
+          <th>Original</th>
+          <th>Discount</th>
+          <th>Final Price</th>
         </tr>
       </thead>
       <tbody>
@@ -117,35 +119,31 @@
           <tr>
             <td><%= item.name %></td>
             <td><%= item.quantity %></td>
+            <td>₹<%= item.originalPrice %></td>
+            <td>- ₹<%= item.discount %></td>
             <td>₹<%= item.price %></td>
           </tr>
         <% }) %>
       </tbody>
       <tfoot>
         <tr>
-          <td colspan="2">Subtotal</td>
+          <td colspan="4">Subtotal</td>
           <td>₹<%= subTotal %></td>
         </tr>
-        <% if (platformFee >= 0) { %>
-        <tr>
-          <td colspan="2">Platform Fee</td>
-          <td>₹<%= platformFee %></td>
-        </tr>
-        <% } %>
         <% if (deliveryFee >= 0) { %>
         <tr>
-          <td colspan="2">Delivery Fee</td>
+          <td colspan="4">Delivery Fee</td>
           <td>₹<%= deliveryFee %></td>
         </tr>
         <% } %>
-        <% if (discountAmount >= 0) { %>
+        <% if (discountAmount > 0) { %>
         <tr>
-          <td colspan="2">Discount</td>
+          <td colspan="4">Total Discount</td>
           <td>- ₹<%= discountAmount %></td>
         </tr>
         <% } %>
         <tr>
-          <td colspan="2">Total</td>
+          <td colspan="4">Total</td>
           <td>₹<%= total %></td>
         </tr>
       </tfoot>

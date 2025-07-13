@@ -1,6 +1,9 @@
 import express from 'express';
 import authAdmin from '../middleware/authAdmin.js';
 import couponModel from '../models/couponModel.js';
+import { getAllCoupons, updateCoupon } from '../controllers/couponController.js';
+import dotenv from 'dotenv';
+dotenv.config();
 
 const couponRouter = express.Router();
 
@@ -104,5 +107,20 @@ return res.json({
   }
 });
 
+
+couponRouter.delete('/:id', authAdmin, async (req, res) => {
+  try {
+    await couponModel.findByIdAndDelete(req.params.id);
+    res.json({ success: true, message: 'Coupon deleted successfully.' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, message: 'Failed to delete coupon.' });
+  }
+});
+
+
+
+couponRouter.get('/admin-get-all', getAllCoupons);
+couponRouter.put('/admin-update/:id', updateCoupon);
 
 export default couponRouter;

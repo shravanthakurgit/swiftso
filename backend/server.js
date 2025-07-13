@@ -11,12 +11,7 @@ import cartRouter from './routes/cartRouter.js';
 import orderRouter from './routes/orderRouter.js';
 import path from 'path';
 import rateLimit from 'express-rate-limit';
-
-
 dotenv.config();
-
-
-
 
 
 
@@ -60,15 +55,15 @@ app.use(cookieParser());
 // app.use(bodyParser.json()); // Parse application/json
 // app.use(bodyParser.urlencoded({ extended: true })); // Parse application/x-www-form-urlencoded
 
-// const limiter = rateLimit({
-//   windowMs: 10 * 60 * 1000,  
-//   max: 150,                 
-//   message: 'Too many requests from this IP, please try again later.',
-//   standardHeaders: true,   
-//   legacyHeaders: false,     
-// });
+const limiter = rateLimit({
+  windowMs: 1 * 60 * 1000,  
+  max: 150,                 
+  message: 'Too many requests from this IP, please try again later.',
+  standardHeaders: true,   
+  legacyHeaders: false,     
+});
 
-// app.use('/api/', limiter);
+app.use('/api/', limiter);
 
 // Routes
 app.use('/api/user', userRouter);

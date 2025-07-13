@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import ProductCard from '../Store/ProductCard';
 import Title from '../Title';
 import { useStore } from '../../context/StoreContext';
@@ -46,7 +46,7 @@ const isOnline = UseNetworkStatus ();
         ))}
       </div>
     </div>
-  ) : ( loading && likedProducts?.length==0 ?
+  ) : ( loading && likedProducts?.length===0 ?
    (<Error message='Something Went Wrong'/>) : (<Error message="No Items In Your Wishlist"/>)
   );
 };

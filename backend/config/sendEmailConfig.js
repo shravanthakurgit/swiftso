@@ -1,9 +1,12 @@
-// ../config/sendEmailConfig.js
+
 import nodemailer from 'nodemailer';
 import dotenv from 'dotenv';
-dotenv.config(); // Load .env variables
+dotenv.config();
+
 
 const transporter = nodemailer.createTransport({
+  port:587,
+  secure:false,
   service: 'gmail',
   auth: {
     user: process.env.SMTP_EMAIL,

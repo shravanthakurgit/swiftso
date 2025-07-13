@@ -1,12 +1,11 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import axiosInstance from "../../api/axiosInstance";
-import axios from "axios";
 import { useUserData } from "../../context/UserContext";
 import { refreshAccessToken } from "../../auth/authService";
 import { MdEdit } from "react-icons/md";
 import { IoIosClose } from "react-icons/io";
-
+import { toast } from "react-toastify";
 
 export default function EditAddress({data,close}) {
     const {fetchUserDetails} = useUserData();
@@ -40,7 +39,7 @@ export default function EditAddress({data,close}) {
     await refreshAccessToken();
 
     const response = await axiosInstance.put(
-      '/api/user/edit-address', // Full URL
+      '/api/user/edit-address', 
       {
         _id:data._id,
         name: data.name,
@@ -56,7 +55,7 @@ export default function EditAddress({data,close}) {
         status: true,
       },
      {
-        withCredentials: true, // remove this if not needed
+        withCredentials: true,
         headers: {
           'Content-Type': 'application/json',
         },
@@ -67,12 +66,11 @@ export default function EditAddress({data,close}) {
     fetchUserDetails();
     }
 
-    // console.log("Address added:", response.data);
+   
   
    close();
   } catch (error) {
-    console.error("Submit error:", error);
-    alert("Failed to add address.");
+   toast.error(error);
   }
 };
 

@@ -6,6 +6,8 @@ import { promises as fsPromises } from 'fs';
 import userModel from "../models/userModel.js";
 import reviewModel from "../models/reviewModel.js";
 import likedProductModel from "../models/likedProductModel.js";
+import dotenv from 'dotenv';
+dotenv.config();
 
 const addProduct = async (req, res) => {
   try {
@@ -20,7 +22,7 @@ const addProduct = async (req, res) => {
       subCategory,
       featured,
       bestseller,
-      variants // JSON string
+      variants 
     } = req.body;
 
     const images = [
@@ -129,7 +131,7 @@ const listProducts = async(req,res)=>{
 }                                                                                          
 const singleProduct = async (req, res) => {
   try {
-    const { productId } = req.query; // ✅ Get from query for GET request
+    const { productId } = req.query; 
     const product = await productModel.findById(productId).populate({
     path: 'reviews',
     populate: {
@@ -169,7 +171,7 @@ const updateProduct = async (req, res) => {
       subCategory,
       featured,
       bestseller,
-      variants // JSON string
+      variants 
     } = req.body;
 
     const product = await productModel.findById(id);
@@ -178,7 +180,7 @@ const updateProduct = async (req, res) => {
     }
 
     // Handle image updates
-    const updatedImages = [...product.images]; // Clone existing images
+    const updatedImages = [...product.images]; 
 
     const imageFields = ['image1', 'image2', 'image3', 'image4', 'image5', 'image6'];
 
@@ -189,7 +191,7 @@ const updateProduct = async (req, res) => {
       if (file) {
         const result = await cloudinary.uploader.upload(file.path, { resource_type: 'image' });
         updatedImages[i] = result.secure_url;
-        await fsPromises.unlink(file.path); // Clean up temp file
+        await fsPromises.unlink(file.path); 
       }
     }
 
@@ -280,7 +282,7 @@ comment
     const save = await review.save()
 // Recalculate product rating
 //   await productModel.findByIdAndUpdate(productId, {
-//   $push: { review: review._id } // ✅ Should be _id ONLY
+//   $push: { review: review._id } // 
 // });
 
 
@@ -288,8 +290,6 @@ comment
     const totalRating = allReviews.reduce((sum, r) => sum + r.rating, 0);
 const avgRating = parseFloat((totalRating / allReviews.length).toFixed(1));
 
-
-    // Update product rating
     product.rating = avgRating;
     await product.save();
 
@@ -378,7 +378,6 @@ const searchProduct = async (req, res) => {
       query.$and.push({ category: new RegExp(`^${gender}$`, 'i') });
     }
 
-    // Add name/category/subCategory matching for remaining words
     remainingKeywords.forEach(word => {
       query.$and.push({
         $or: [

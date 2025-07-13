@@ -2,7 +2,9 @@ import { createContext, useContext, useEffect, useState } from "react";
 import axiosInstance from "../api/axiosInstance";
 import { backendUrl } from "../utils/backendUrl";
 import { useAuth } from "./AuthContext";
+import { toast
 
+ } from "react-toastify";
 const userContext = createContext();
 
 export const UserDetailsProvider = ({ children }) => {
@@ -22,7 +24,8 @@ export const UserDetailsProvider = ({ children }) => {
         setUserAddress(response.data.user.address || []);
       }
     } catch (error) {
-      console.error("Failed to fetch user details:", error);
+      //  toast.error(error?.response?.data?.message || error?.message || "Something went wrong");
+      return null;
     }
   };
 

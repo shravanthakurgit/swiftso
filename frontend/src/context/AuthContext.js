@@ -1,17 +1,18 @@
-// src/context/AuthContext.js
-import { createContext, useContext, useState, useEffect, useRef } from 'react';
-import axiosInstance from '../api/axiosInstance';
+import { createContext, useContext, useState, useEffect, useRef } from "react";
+import axiosInstance from "../api/axiosInstance";
+import { toast } from "react-toastify";
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const [isAuthenticated, setIsAuthenticated] = useState(!!localStorage.getItem('accessToken'));
+  const [isAuthenticated, setIsAuthenticated] = useState(
+    !!localStorage.getItem("accessToken")
+  );
   const [isLoading, setIsLoading] = useState(true);
   const [userData, setUserData] = useState(null || []);
   const [userAddress, setUserAddress] = useState(null || []);
-  
 
-  const accessToken = localStorage.getItem('accessToken');
+  const accessToken = localStorage.getItem("accessToken");
 
   const checkAuth = async () => {
     try {
@@ -20,7 +21,7 @@ export const AuthProvider = ({ children }) => {
         return;
       }
 
-      const res = await axiosInstance.post('/api/user/profile');
+      const res = await axiosInstance.post("/api/user/profile");
 
       if (res?.data?.success) {
         setIsAuthenticated(true);
@@ -29,39 +30,36 @@ export const AuthProvider = ({ children }) => {
       } else {
         setIsAuthenticated(false);
       }
-
     } catch (error) {
       if (!navigator.onLine) {
-        // console.warn('User is offline — preserving authentication state.');
         return;
       }
-
-      console.error('Auth check failed:', error);
       setIsAuthenticated(false);
+    //  toast.error(error?.response?.data?.message || error?.message || "Something went wrong");
+    return null;
     } finally {
       setIsLoading(false);
     }
   };
 
-const didCheck = useRef(false);
+  const didCheck = useRef(false);
 
-useEffect(() => {
-  if (didCheck.current) return;
-  didCheck.current = true;
+  useEffect(() => {
+    if (didCheck.current) return;
+    didCheck.current = true;
 
-  checkAuth();
-
-  const handleReconnect = () => {
     checkAuth();
-  };
 
-  window.addEventListener('online', handleReconnect);
+    const handleReconnect = () => {
+      checkAuth();
+    };
 
-  return () => {
-    window.removeEventListener('online', handleReconnect);
-  };
-}, []);
+    window.addEventListener("online", handleReconnect);
 
+    return () => {
+      window.removeEventListener("online", handleReconnect);
+    };
+  }, []);
 
   return (
     <AuthContext.Provider

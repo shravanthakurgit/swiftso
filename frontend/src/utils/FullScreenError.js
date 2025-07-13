@@ -1,4 +1,3 @@
-// FullScreenError.js
 const FullScreenError = () => (
   <div className="fixed inset-0 z-50 bg-white text-center flex flex-col items-center justify-center p-8">
     <img src="/assets/error.gif" alt="Error" className="w-28 h-auto mb-4" />

@@ -1,8 +1,6 @@
-// src/api/axiosInstance.js
+
 import axios from 'axios';
 import { refreshAccessToken } from '../auth/authService';
-import { useAuth } from '../context/AuthContext';
-
 const baseURL = process.env.REACT_APP_BACKEND_URL;
 
 const axiosInstance = axios.create({
@@ -35,20 +33,20 @@ axiosInstance.interceptors.response.use(
   async error => {
     const originalRequest = error.config;
 
-      // ✅ Handle rate limit error
+      //  Handle rate limit error
       if (error.response?.status === 429) {
         if (setRateLimitError) setRateLimitError(true);
         return Promise.reject(error);
       }
 
-    // 💥 Handle Rate Limit (429)
+    // Handle Rate Limit (429)
     if (error.response?.status === 429) {
       console.warn('[RATE LIMIT HIT]', error.response.data?.message || 'Too many requests');
       if (setRateLimitError) setRateLimitError(true); // show full-screen error
       return Promise.reject(error);
     }
 
-    // 🔐 Handle Unauthorized (401)
+    // Handle Unauthorized (401)
     if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
       try {

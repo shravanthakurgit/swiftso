@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import axios from 'axios';
 import { backendUrl } from '../App';
 import { FaRegCircleCheck } from "react-icons/fa6";
@@ -40,7 +40,7 @@ const Coupon = ({ token }) => {
   const notification = document.getElementById("notification");
   notification.style.display = "block";
 
-  // Optional: Hide it after a few seconds
+  
   setTimeout(() => {
     notification.style.display = "none";
   }, 3000);
@@ -51,7 +51,7 @@ const Coupon = ({ token }) => {
 
     setMessage(`✅ Coupon created successfully.`);
   } catch (err) {
-    setMessage(`❌ Error: ${err.response?.data?.message || 'Something went wrong'}`);
+    setMessage(`Error: ${err.response?.data?.message || 'Something went wrong'}`);
   }
 };
 
@@ -71,6 +71,7 @@ const Coupon = ({ token }) => {
       {message && <div className="mb-4 text-sm text-blue-600">{message}</div>}
 
       <form onSubmit={handleSubmit} className="space-y-4">
+        
         {/* Coupon Code */}
         <div>
           <label htmlFor="code" className="block font-medium mb-1">Coupon Code</label>

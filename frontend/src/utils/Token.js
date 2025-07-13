@@ -10,7 +10,7 @@ const getCurrentUserId = () => {
 
   try {
     const decoded = jwtDecode(token);
-    return decoded.id || decoded._id || decoded.userId; // depends on your backend
+    return decoded.id || decoded._id || decoded.userId; 
   } catch (err) {
     return null;
   }

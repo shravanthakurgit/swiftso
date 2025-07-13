@@ -1,16 +1,15 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import axios from "axios";
 import { NavLink, useNavigate } from "react-router-dom";
-import { Eye, EyeOff, MailCheck } from "lucide-react"; 
+import { Eye, EyeOff, MailCheck } from "lucide-react";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { FaRegCircleCheck } from "react-icons/fa6";
 import { useEffect } from "react";
 import { backendUrl } from "../../utils/backendUrl";
-
+import { useAuth } from "../../context/AuthContext";
 
 export default function SignUp() {
   const navigate = useNavigate();
- 
 
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -20,30 +19,24 @@ export default function SignUp() {
   const [showPassword, setShowPassword] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
+  const { isAuthenticated } = useAuth();
+
   const [isLoading, setIsLoading] = useState(false);
   const [isSignuped, setIsSignuped] = useState(false);
 
-  const token = localStorage.getItem("accessToken");
-
-  useEffect(()=>{
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-
-  
-     
-  },[])
-
 
   useEffect(() => {
-     
-      if (token) {
-        navigate("/");
-      }
-    }, [token, navigate]);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, []);
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate("/");
+    }
+  }, [isAuthenticated, navigate]);
 
   const onSubmitHandler = async (e) => {
     e.preventDefault();
-
-
 
     if (password !== confirmPassword) {
       setErrorMessage("Passwords do not match.");
@@ -58,82 +51,90 @@ export default function SignUp() {
       password,
     };
 
-  try {
-  setIsLoading(true);
+    try {
+      setIsLoading(true);
 
-  const response = await axios.post(`${backendUrl}/api/user/register`, payload, {
-    withCredentials: true,
-  });
+      const response = await axios.post(
+        `${backendUrl}/api/user/register`,
+        payload,
+        {
+          withCredentials: true,
+        }
+      );
+      setIsSignuped(true);
+      setErrorMessage("");
 
+      await new Promise((resolve) => {
+        setTimeout(() => {
+          setIsSignuped(true);
+          resolve();
+        }, 5000);
+      });
 
-  
+      if (response) {
+        const { accessToken, refreshToken } = response.data.tokens;
 
-  // const message = response?.data?.message || "User registered successfully";
-  setIsSignuped(true);
-  setErrorMessage("");
-  
-  await new Promise((resolve) => {
-  setTimeout(() => {
-    setIsSignuped(true);
-    resolve();
-  }, 5000);
-});
+        localStorage.setItem("accessToken", accessToken);
+        localStorage.setItem("refreshToken", refreshToken);
+      }
 
-if(response){
-    const { accessToken, refreshToken } = response.data.tokens;
-
-
-
-localStorage.setItem("accessToken", accessToken);
-localStorage.setItem("refreshToken", refreshToken);
-
-  }
-
-  navigate("/"); 
-} catch (error) {
-  setIsLoading(false);
-  setIsSignuped(false);
-  const message = error.response?.data?.message || error.message;
-  setErrorMessage(message);
-  setTimeout(() => setErrorMessage(""), 4000);
-} finally {
-  setIsLoading(false);
-}
-
+      navigate("/");
+    } catch (error) {
+      setIsLoading(false);
+      setIsSignuped(false);
+      const message = error.response?.data?.message || error.message;
+      setErrorMessage(message);
+      setTimeout(() => setErrorMessage(""), 4000);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
-
-    
-
-
     <div className="pb-6 flex items-start mt-6 justify-center px-4 py-2">
-
-
-
-       {isLoading && (
+      {isLoading && (
         <div className=" fixed text-center text-white font-semibold inset-0 z-50 bg-black bg-opacity-50 flex justify-center items-center ">
-          <div className="absolute flex justify-center items-center gap-4 bg-green-600 p-6 rounded-md  border border-white ">Registering. Please wait.. <AiOutlineLoading3Quarters className='animate-spin' /></div>
+          <div className="absolute flex justify-center items-center gap-4 bg-green-600 p-6 rounded-md  border border-white ">
+            Registering. Please wait..{" "}
+            <AiOutlineLoading3Quarters className="animate-spin" />
+          </div>
         </div>
       )}
-      
-          {isSignuped && (
+
+      {isSignuped && (
         <div className=" fixed text-center m-auto text-white font-semibold inset-0 z-50 bg-black bg-opacity-80 flex justify-center items-center ">
-          <div className="absolute  flex justify-center items-center gap-4 ">Registered SuccessFully  <FaRegCircleCheck /></div>
+          <div className="absolute  flex justify-center items-center gap-4 ">
+            Registered SuccessFully <FaRegCircleCheck />
+          </div>
 
-          <div className=" flex items-center  gap-3  px-4 absolute top-[32%] bg-green-500 border p-2 rounded-md"><p >A verification email sent to you. </p><MailCheck className="size-[20px] ping-once"/></div>
+          <div className=" flex items-center  gap-3  px-4 absolute top-[32%] bg-green-500 border p-2 rounded-md">
+            <p>A verification email sent to you. </p>
+            <MailCheck className="size-[20px] ping-once" />
+          </div>
 
-          <button onClick={()=>{navigate("/"); setIsSignuped(false)}} className='absolute top-[60%] p-1 border px-4 w-[150px] rounded-full monst text-xs'>Close</button>
-      
+          <button
+            onClick={() => {
+              navigate("/");
+              setIsSignuped(false);
+            }}
+            className="absolute top-[60%] p-1 border px-4 w-[150px] rounded-full monst text-xs"
+          >
+            Close
+          </button>
         </div>
       )}
 
       <div className="w-full max-w-sm bg-white rounded-md shadow-md p-6 border space-y-6">
-        <h2 className="monst font-semibold text-gray-800 text-center text-md">New User? Register</h2>
+        <h2 className="monst font-semibold text-gray-800 text-center text-md">
+          New User? Register
+        </h2>
 
         <form className="space-y-4" onSubmit={onSubmitHandler}>
           <div>
-            <label htmlFor="firstName" className="block text-sm font-medium text-gray-700 text-left">
+            <label
+              htmlFor="firstName"
+              className="block text-sm font-medium text-gray-700 text-left"
+            >
               First Name <span className="text-sm text-red-600">*</span>
             </label>
             <input
@@ -147,7 +148,10 @@ localStorage.setItem("refreshToken", refreshToken);
           </div>
 
           <div>
-            <label htmlFor="lastName" className="block text-sm font-medium text-gray-700 text-left">
+            <label
+              htmlFor="lastName"
+              className="block text-sm font-medium text-gray-700 text-left"
+            >
               Last Name
             </label>
             <input
@@ -160,7 +164,10 @@ localStorage.setItem("refreshToken", refreshToken);
           </div>
 
           <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700 text-left">
+            <label
+              htmlFor="email"
+              className="block text-sm font-medium text-gray-700 text-left"
+            >
               Email <span className="text-sm text-red-600">*</span>
             </label>
             <input
@@ -175,7 +182,10 @@ localStorage.setItem("refreshToken", refreshToken);
           </div>
 
           <div className="relative">
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700 text-left">
+            <label
+              htmlFor="password"
+              className="block text-sm font-medium text-gray-700 text-left"
+            >
               Password <span className="text-sm text-red-600">*</span>
             </label>
             <input
@@ -196,7 +206,10 @@ localStorage.setItem("refreshToken", refreshToken);
           </div>
 
           <div className="relative">
-            <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 text-left">
+            <label
+              htmlFor="confirmPassword"
+              className="block text-sm font-medium text-gray-700 text-left"
+            >
               Confirm Password <span className="text-sm text-red-600">*</span>
             </label>
             <input
@@ -224,11 +237,13 @@ localStorage.setItem("refreshToken", refreshToken);
           </button>
         </form>
 
-        <div className="flex text-xs gap-2"><p>Already have an account ?</p><NavLink to="/login"><span className="font-semibold monst linkc">Login Here</span></NavLink></div>
-        
+        <div className="flex text-xs gap-2">
+          <p>Already have an account ?</p>
+          <NavLink to="/login">
+            <span className="font-semibold monst linkc">Login Here</span>
+          </NavLink>
+        </div>
       </div>
-       
-       
     </div>
   );
 }

@@ -1,14 +1,12 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import axiosInstance from "../../api/axiosInstance";
-import axios from "axios";
 import { useUserData } from "../../context/UserContext";
 import { refreshAccessToken } from "../../auth/authService";
 import { IoIosClose } from "react-icons/io";
 
-
 export default function AddAddress() {
-    const {fetchUserDetails} = useUserData();
+  const { fetchUserDetails } = useUserData();
   const [open, setOpen] = useState(false);
 
   const {
@@ -17,47 +15,45 @@ export default function AddAddress() {
     formState: { errors },
   } = useForm();
 
-  const onSubmit = async (data,e) => {
-    e.preventDefault()
-  try {
+  const onSubmit = async (data, e) => {
+    e.preventDefault();
+    try {
+      await refreshAccessToken();
 
-    await refreshAccessToken();
-
-    const response = await axiosInstance.post(
-      '/api/user/add-address', // Full URL
-      {
-        name: data.name,
-        address: data.address,
-        address_2: data.address_2,
-        city: data.city,
-        state: data.state,
-        country: data.country,
-        pincode: data.pincode,
-        phone: data.phone,
-        email: data.email,
-        landmark: data.landmark,
-        status: true,
-      },
-     {
-        withCredentials: true, // remove this if not needed
-        headers: {
-          'Content-Type': 'application/json',
+      const response = await axiosInstance.post(
+        "/api/user/add-address",
+        {
+          name: data.name,
+          address: data.address,
+          address_2: data.address_2,
+          city: data.city,
+          state: data.state,
+          country: data.country,
+          pincode: data.pincode,
+          phone: data.phone,
+          email: data.email,
+          landmark: data.landmark,
+          status: true,
         },
+        {
+          withCredentials: true, 
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      if (response) {
+        fetchUserDetails();
       }
-    );
 
-    if(response){
-    fetchUserDetails();
+
+      setOpen(false);
+    } catch (error) {
+      console.error("Submit error:", error);
+      alert("Failed to add address.");
     }
-
-    // console.log("Address added:", response.data);
-  
-    setOpen(false);
-  } catch (error) {
-    console.error("Submit error:", error);
-    alert("Failed to add address.");
-  }
-};
+  };
 
   return (
     <>
@@ -77,18 +73,23 @@ export default function AddAddress() {
                 onClick={() => setOpen(false)}
                 className="text-gray-600 hover:text-gray-700 text-2xl  bg-gray-200 rounded-full h-8 w-8 flex -mt-2 justify-center items-center flex-col text-center"
               >
-                <IoIosClose/>
+                <IoIosClose />
               </button>
             </div>
 
-            <form onSubmit={handleSubmit(onSubmit)} className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <form
+              onSubmit={handleSubmit(onSubmit)}
+              className="grid grid-cols-1 md:grid-cols-2 gap-4"
+            >
               <div>
                 <input
                   placeholder="Full Name"
                   {...register("name", { required: true })}
                   className="w-full border px-3 py-2 rounded"
                 />
-                {errors.name && <p className="text-red-500 text-sm">Name is required</p>}
+                {errors.name && (
+                  <p className="text-red-500 text-sm">Name is required</p>
+                )}
               </div>
 
               <div>
@@ -97,7 +98,9 @@ export default function AddAddress() {
                   {...register("phone", { required: true })}
                   className="w-full border px-3 py-2 rounded"
                 />
-                {errors.phone && <p className="text-red-500 text-sm">Phone is required</p>}
+                {errors.phone && (
+                  <p className="text-red-500 text-sm">Phone is required</p>
+                )}
               </div>
 
               <div className="md:col-span-2">
@@ -106,7 +109,9 @@ export default function AddAddress() {
                   {...register("address", { required: true })}
                   className="w-full border px-3 py-2 rounded"
                 />
-                {errors.address && <p className="text-red-500 text-sm">Address is required</p>}
+                {errors.address && (
+                  <p className="text-red-500 text-sm">Address is required</p>
+                )}
               </div>
 
               <div className="md:col-span-2">
@@ -123,7 +128,9 @@ export default function AddAddress() {
                   {...register("city", { required: true })}
                   className="w-full border px-3 py-2 rounded"
                 />
-                {errors.city && <p className="text-red-500 text-sm">City is required</p>}
+                {errors.city && (
+                  <p className="text-red-500 text-sm">City is required</p>
+                )}
               </div>
 
               <div>
@@ -132,7 +139,9 @@ export default function AddAddress() {
                   {...register("state", { required: true })}
                   className="w-full border px-3 py-2 rounded"
                 />
-                {errors.state && <p className="text-red-500 text-sm">State is required</p>}
+                {errors.state && (
+                  <p className="text-red-500 text-sm">State is required</p>
+                )}
               </div>
 
               <div>
@@ -150,7 +159,9 @@ export default function AddAddress() {
                   {...register("pincode", { required: true })}
                   className="w-full border px-3 py-2 rounded"
                 />
-                {errors.pincode && <p className="text-red-500 text-sm">Pincode is required</p>}
+                {errors.pincode && (
+                  <p className="text-red-500 text-sm">Pincode is required</p>
+                )}
               </div>
 
               <div className="md:col-span-2">

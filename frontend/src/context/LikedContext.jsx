@@ -1,7 +1,7 @@
 import { createContext, useState, useEffect, useRef } from "react";
 import axiosInstance from "../api/axiosInstance";
 import { useAuth } from "./AuthContext";
-
+import { toast } from "react-toastify";
 export const LikedContext = createContext();
 
 export const LikedProvider = ({ children }) => {
@@ -36,7 +36,8 @@ export const LikedProvider = ({ children }) => {
         localStorage.setItem("likedItems", JSON.stringify(mapped));
         hasFetched.current = true;
       } catch (error) {
-        return
+        // toast.error(error?.response?.data?.message || error?.message || "Something went wrong");
+        return null;
       }
     };
 
@@ -51,7 +52,7 @@ export const LikedProvider = ({ children }) => {
           { withCredentials: true }
         );
       } catch (err) {
-      return
+        toast.error(err);
       }
     };
 
@@ -73,7 +74,7 @@ export const LikedProvider = ({ children }) => {
           { withCredentials: true }
         );
       } catch (error) {
-        console.error("Failed to toggle like on backend:", error);
+        toast.error(error);
       }
     }
   };

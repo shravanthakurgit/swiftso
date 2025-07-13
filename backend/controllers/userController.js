@@ -2,10 +2,8 @@
 import validator from 'validator';
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
-
 import mongoose from 'mongoose';
 import userModel from '../models/userModel.js';
-
 import verifyEmailTemplate from '../utils/verifyEmailTemplate.js';
 import createRefreshToken from '../utils/createRefreshToken.js';
 import createAccessToken from '../utils/createAccessToken.js';
@@ -13,6 +11,8 @@ import generateOTP from '../utils/generateOTP.js';
 import sendOTPEmail from '../utils/sendOTPEmail.js';
 import sendEmail from '../utils/sendEmail.js';
 import addressModel from '../models/addressModel.js';
+import dotenv from 'dotenv';
+dotenv.config();
 
 const createToken = (id)=>{
     return jwt.sign({id},process.env.JWT_SECRET)
@@ -39,6 +39,8 @@ const loginUser = async (req, res) => {
     }
 
     const user = await userModel.findOne({ email });
+    
+
 
     if (!user) {
       return res.status(404).json({ success: false, message: "User doesn't exist" });
@@ -48,11 +50,34 @@ const loginUser = async (req, res) => {
       return res.status(500).json({ success: false, message: "User has no password stored." });
     }
 
+
+
+    
+    if (user.status === "suspended") {
+      return res.status(403).json({
+        success: false,
+        message: "Your account is suspended. Contact support team.",
+      });
+    }
+
+    if (user.status === "inactive") {
+      return res.status(403).json({
+        success: false,
+        message: "Your account is inactive. Contact support team.",
+      });
+    }
+
+
+    
+
     const isMatched = await bcrypt.compare(password, user.password);
 
+
+
     if (isMatched) {
-      const accessToken = await createAccessToken(user._id); 
-      const refreshToken = await createRefreshToken(user._id);
+    const accessToken = await createAccessToken(user);
+const refreshToken = await createRefreshToken(user);
+
 
       res.cookie('accessToken', accessToken, cookiesOption);
       res.cookie('refreshToken', refreshToken, cookiesOption);
@@ -75,13 +100,12 @@ const loginUser = async (req, res) => {
 };
 
   
-  const registerUser = async (req, res) => {
-  try {
-    // console.log("Incoming request body:", req.body);
 
+const registerUser = async (req, res) => {
+  try {
     const { first_name, last_name, email, password } = req.body;
 
-    // 1. Check for required fields
+    
     if (!first_name || !email || !password) {
       return res.status(400).json({
         success: false,
@@ -89,7 +113,7 @@ const loginUser = async (req, res) => {
       });
     }
 
-    // 2. Check for existing user
+    
     const existingUser = await userModel.findOne({ email });
     if (existingUser) {
       return res.status(400).json({
@@ -98,7 +122,7 @@ const loginUser = async (req, res) => {
       });
     }
 
-    // 3. Validate email
+    
     if (!validator.isEmail(email)) {
       return res.status(400).json({
         success: false,
@@ -106,7 +130,43 @@ const loginUser = async (req, res) => {
       });
     }
 
-    // 4. Validate password
+    // 4. Validate email domain
+   const allowedDomains = [
+  'gmail.com',
+  'yahoo.com',
+  'yahoo.co.in',
+  'outlook.com',
+  'hotmail.com',
+  'live.com',
+  'icloud.com',
+  'me.com',
+  'protonmail.com',
+  'proton.me',
+  'proton.me',
+  'zoho.com',
+  'gmx.com',
+  'mail.com',
+  'aol.com',
+  'fastmail.com',
+  'yandex.com',
+];
+
+    const emailDomain = email.split('@')[1].toLowerCase();
+    const isUniversityEmail =
+      emailDomain.endsWith('.edu') ||
+      emailDomain.includes('.ac.') ||
+      emailDomain.includes('.edu.');
+
+    const isAllowedDomain = allowedDomains.includes(emailDomain) || isUniversityEmail;
+
+    if (!isAllowedDomain) {
+      return res.status(400).json({
+        success: false,
+        message: "Email domain not allowed. Try another eg. gmail, outlook... etc",
+      });
+    }
+
+    
     if (password.length < 8) {
       return res.status(400).json({
         success: false,
@@ -114,62 +174,153 @@ const loginUser = async (req, res) => {
       });
     }
 
-    // 5. Hash the password
+    
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // 6. Save the user
-    const newUser = await userModel.create({
+    const newUser = new userModel({
       first_name,
       last_name,
       email,
       password: hashedPassword,
     });
 
-    const save = await newUser.save()
-    const verifyEmailUrl= `${process.env.FRONTEND_URL}verify-email?code=${save?._id}`;
+    const savedUser = await newUser.save();
 
+    const verifyEmailUrl = `${process.env.FRONTEND_URL}/verify-email?code=${savedUser._id}`;
 
-    const accessToken = await createAccessToken(newUser._id); 
-    const refreshToken = await createRefreshToken(newUser._id);
-
-
-
-    const verifyEmail = await sendEmail({
+    
+    await sendEmail({
       to: email,
       subject: "Please Verify Your Email",
       html: verifyEmailTemplate({
         name: first_name,
-        url: verifyEmailUrl
-      })
-    })
+        url: verifyEmailUrl,
+      }),
+    });
 
+    // 10. Generate tokens
+    const accessToken = createAccessToken(savedUser);
+    const refreshToken = createRefreshToken(savedUser);
 
+    // 11. Set cookies
+    const cookiesOptions = {
+      httpOnly: true,
+      secure: true,
+      sameSite: "None",
+    };
 
-    // 7. Generate token
-    // const token = createToken(newUser._id);
+    res.cookie("accessToken", accessToken, cookiesOptions);
+    res.cookie("refreshToken", refreshToken, cookiesOptions);
 
-
-     const cookiesOption = {
-        httpOnly: true,
-        secure : true,
-        samesite: "None"
-      }
-
-      res.cookie('accessToken',accessToken,cookiesOption )
-      res.cookie('refreshToken',refreshToken,cookiesOption )
-
-  
-    return res.status(201).json({ message:"Login SuccessFully" ,success: true, tokens: {
-         accessToken, refreshToken }
-      
-      });
-
+    // 12. Return response
+    return res.status(201).json({
+      message: "Registration successful. Please verify your email.",
+      success: true,
+      tokens: {
+        accessToken,
+        refreshToken,
+      },
+    });
   } catch (error) {
     console.error("Registration error:", error);
     return res.status(500).json({
       success: false,
       message: "Server error. Please try again later.",
     });
+  }
+};
+
+export default registerUser;
+
+
+
+
+
+const adminLogin = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+      return res.status(400).json({ success: false, message: 'Email and password are required' });
+    }
+
+    const user = await userModel.findOne({ email });
+
+    const isEnvAdmin = (
+      email === process.env.ADMIN_EMAIL &&
+      password === process.env.ADMIN_PASS
+    );
+
+    let role, userId, isPasswordValid = false;
+
+    if (user) {
+      isPasswordValid = await bcrypt.compare(password, user.password);
+      role = user.role;
+      userId = user._id;
+    } else if (isEnvAdmin) {
+      isPasswordValid = true;
+      role = 'admin';
+      userId = 'env-admin'; // placeholder ID
+    }
+
+    if (!isPasswordValid) {
+      return res.status(401).json({ success: false, message: "Invalid credentials" });
+    }
+
+    const allowedRoles = ['admin', 'manager'];
+    if (!allowedRoles.includes(role)) {
+      return res.status(403).json({ success: false, message: "Access denied: not an admin" });
+    }
+
+    const payload = {
+      userId,
+      email,
+      role
+    };
+
+    const token = jwt.sign(payload, process.env.ACCESS_SECRET, {
+      expiresIn: process.env.ACCESS_TOKEN_EXPIRY || '2h',
+    });
+    console.log(token)
+
+    return res.status(200).json({ success: true, token });
+  } catch (error) {
+    console.error('[adminLogin error]', error);
+    return res.status(500).json({ success: false, message: "Internal Server Error" });
+  }
+};
+
+
+
+
+export const resendVerificationEmail = async (req, res) => {
+  try {
+    const userId = req.userId; // From auth middleware
+    const user = await userModel.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({ success: false, message: "User not found." });
+    }
+
+    if (user.verified_email) {
+      return res.status(400).json({ success: false, message: "Email already verified." });
+    }
+
+    const verifyEmailUrl = `${process.env.FRONTEND_URL}/verify-email?code=${user._id}`;
+
+    await sendEmail({
+      to: user.email,
+      subject: "Verify Your Email Address",
+      html: verifyEmailTemplate({
+        name: user.first_name || "User",
+        url: verifyEmailUrl,
+      }),
+    });
+
+    res.status(200).json({ success: true, message: "Verification email sent." });
+  } catch (error) {
+    console.error("Error sending verification email:", error);
+    res.status(500).json({ success: false, message: "Server error." });
   }
 };
 
@@ -203,37 +354,6 @@ const verifyEmailController = async (req, res) => {
   } catch (error) {
     console.error("Email verification error:", error);
     return res.status(500).json({ success: false, message: error.message || "Server error" });
-  }
-};
-
- 
-  
-const adminLogin = async (req, res) => {
-  try {
-    const { email, password } = req.body;
-
-    if (!email || !password) {
-      return res.status(400).json({ success: false, message: 'Email and password are required' });
-    }
-
-    // Validate admin credentials
-    if (
-      email === process.env.ADMIN_EMAIL &&
-      password === process.env.ADMIN_PASS
-    ) {
-      // Create a structured payload so the token can be verified easily
-      const token = jwt.sign(
-        { email, role: 'admin' },
-        process.env.JWT_SECRET,
-        { expiresIn: '2h' } // optional: set expiration
-      );
-
-      return res.json({ success: true, token });
-    } else {
-      return res.status(401).json({ success: false, message: 'Unauthorized' });
-    }
-  } catch (error) {
-    return res.status(500).json({ success: false, message: error.message });
   }
 };
 
@@ -646,6 +766,7 @@ const getUser = async (req,res) =>{
   }
 };
 
+
 const refreshToken = async (req, res) => {
   try {
     const refreshToken =
@@ -657,15 +778,20 @@ const refreshToken = async (req, res) => {
 
     const verifyToken = jwt.verify(refreshToken, process.env.REFRESH_SECRET);
 
-    if (!verifyToken) {
+    if (!verifyToken || !verifyToken.userId) {
       return res.status(401).json({
         success: false,
         message: "Invalid Refresh Token",
       });
     }
 
-    const userId = verifyToken.userId;
-    const newAccessToken = await createAccessToken(userId);
+    
+    const user = await userModel.findById(verifyToken.userId).select("email role _id");
+    if (!user) {
+      return res.status(404).json({ success: false, message: "User not found" });
+    }
+
+    const newAccessToken = await createAccessToken(user);
 
     const isProduction = process.env.NODE_ENV === 'production';
 
@@ -677,21 +803,97 @@ const refreshToken = async (req, res) => {
     };
 
     res.cookie('accessToken', newAccessToken, cookiesOption);
-    console.log("New Access Token Generated",)
+    console.log("New Access Token Generated");
 
     return res.json({
       success: true,
       message: "New Access Token Generated",
-      accessToken: newAccessToken, 
+      accessToken: newAccessToken,
     });
+
   } catch (error) {
-    console.error("[REFRESH ERROR]:", error.message); // optional debug
+    console.error("[REFRESH ERROR]:", error.message);
     res.status(500).json({
       success: false,
       message: error.message || "Something went wrong",
     });
   }
 };
+
+
+
+
+
+export const updateUserRole = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const { role } = req.body;
+
+    const validRoles = ["admin", "user", "staff", "manager"];
+    if (!validRoles.includes(role)) {
+      return res.status(400).json({ message: "Invalid role provided." });
+    }
+
+    const user = await userModel.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found." });
+    }
+
+    user.role = role;
+    await user.save();
+
+    res.status(200).json({ message: "User role updated successfully", user });
+  } catch (err) {
+    console.error("Error updating user role:", err);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+
+export const updateUserStatus = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const { status } = req.body;
+
+    const validStatuses = ["active", "inactive", "suspended"];
+    if (!validStatuses.includes(status)) {
+      return res.status(400).json({ message: "Invalid status provided." });
+    }
+
+    const user = await userModel.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found." });
+    }
+
+    user.status = status;
+    await user.save();
+
+    res.status(200).json({ message: "User status updated successfully", user });
+  } catch (err) {
+    console.error("Error updating user status:", err);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+
+export const deleteUser = async (req, res) => {
+  try {
+    const { userId } = req.params;
+
+    const user = await userModel.findByIdAndDelete(userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found." });
+    }
+
+    res.status(200).json({ message: "User deleted successfully." });
+  } catch (err) {
+    console.error("Error deleting user:", err);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+
+
 
 
   export {

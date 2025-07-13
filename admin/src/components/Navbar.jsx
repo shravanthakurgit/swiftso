@@ -1,16 +1,26 @@
-import React from 'react'
-import { MdAdminPanelSettings } from "react-icons/md";
-import { IoLogOutOutline } from "react-icons/io5";
+import { FiMenu } from "react-icons/fi";
 
-const Navbar = ({setToken}) => {
+const Navbar = ({ setToken, onMenuClick }) => {
   return (
-    <div className='flex justify-between p-5 bg-white text-blue-500'>
-        <div className="nabar flex gap-2 items-center "><MdAdminPanelSettings className="text-4x shadow-lg flex justify-center items-center w-8 h-8 rounded text-center"/><span className='font-semibold'>SwiftSo Admin</span>
-        </div>
+    <nav className="flex items-center justify-between p-4 bg-white shadow">
+      <div className="flex items-center gap-4">
+        <button className="md:hidden" onClick={onMenuClick}>
+          <FiMenu className="text-2xl" />
+        </button>
+        <h1 className="text-lg font-semibold">Admin Panel</h1>
+      </div>
 
-        <div className="logout bg-black text-white px-5 flex justify-center items-center text-center rounded-full gap-2 cursor-pointer hover:bg-gray-500 transition-all duration-200 " onClick={()=>setToken('')}><button className='pb-1' >Logout</button><IoLogOutOutline /></div>
-    </div>
-  )
-}
+      <button
+        onClick={() => {
+          localStorage.removeItem("token");
+          setToken("");
+        }}
+        className="text-sm bg-red-500 text-white px-3 py-1 rounded"
+      >
+        Logout
+      </button>
+    </nav>
+  );
+};
 
-export default Navbar
+export default Navbar;

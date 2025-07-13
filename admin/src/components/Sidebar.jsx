@@ -1,59 +1,57 @@
-import React from 'react'
-import { NavLink } from 'react-router-dom'
-import { FiPlusCircle } from "react-icons/fi";
-import { LuPackage } from "react-icons/lu";
-import { LuShoppingBag } from "react-icons/lu";
+import React from "react";
+import { NavLink } from "react-router-dom";
+import { FiPlus } from "react-icons/fi";
+import { LuPackage, LuClipboardList, LuTicket, LuListChecks, LuX } from "react-icons/lu";
 
+const links = [
+  { to: "/add", label: "Add Product", icon: <FiPlus className="text-xl" /> },
+  { to: "/allproducts", label: "All Products", icon: <LuPackage className="text-xl" /> },
+  { to: "/orders", label: "Orders", icon: <LuClipboardList className="text-xl" /> },
+  { to: "/coupons", label: "Create Coupon", icon: <LuTicket className="text-xl" /> },
+  { to: "/admin/all-coupons", label: "List Coupons", icon: <LuListChecks className="text-xl" /> },
+  { to: "/users", label: "Users", icon: <LuListChecks className="text-xl" /> },
+];
 
-const Sidebar = () => {
+const Sidebar = ({ isOpen, onClose }) => {
   return (
-    <div className='w-[25%] min-h-screen border-r text-[15px] overflow-hidden '>
-        
-         <div className="additem flex flex-col items-start w-full bg-green-400 mt-3">
-            <NavLink to='/add' className=' text-white flex items-center gap-3 p-2 justify-start w-full pl-5'>
+    <>
+      {/* Overlay */}
+      {isOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-40 z-30 md:hidden" onClick={onClose}></div>
+      )}
 
-            <FiPlusCircle className='text-4xl ' />
-
-            <p className=' hidden font-semibold md:block'>Add Product</p>
-
-            </NavLink>
-            
-        </div>
-        <div className="additem flex flex-col items-start w-full bg-green-400 mt-3 ">
-            <NavLink to='/allproducts' className=' text-white flex items-center gap-3 p-2 justify-start w-full pl-5'>
-
-            <LuPackage className='text-4xl ' />
-
-            <p className=' hidden font-semibold md:block'>All Products</p>
-
-            </NavLink>
-            
+      <div className={`
+        fixed top-0 left-0 z-40 h-full w-64 bg-white shadow transform transition-transform duration-300 ease-in-out
+        ${isOpen ? "translate-x-0" : "-translate-x-full"} 
+        md:relative md:translate-x-0 md:block md:w-[22%]
+      `}>
+        <div className="flex justify-between items-center p-4 md:hidden">
+          <span className="text-lg font-bold">Menu</span>
+          <button onClick={onClose}>
+            <LuX className="text-2xl" />
+          </button>
         </div>
 
-        <div className="additem flex flex-col items-start w-full bg-green-400 mt-3">
-            <NavLink to='/orders' className=' text-white flex items-center gap-3 p-2 justify-start w-full pl-5'>
-
-            <LuShoppingBag className='text-4xl ' />
-
-            <p className='font-semibold md:block hidden'>Orders</p>
-
+        <nav className="flex flex-col gap-2 p-4">
+          {links.map(({ to, label, icon }) => (
+            <NavLink
+              key={to}
+              to={to}
+              onClick={onClose}
+              className={({ isActive }) =>
+                `flex items-center gap-3 px-3 py-2 rounded hover:bg-green-100 transition ${
+                  isActive ? "bg-green-200 font-semibold" : "text-gray-700"
+                }`
+              }
+            >
+              {icon}
+              <span>{label}</span>
             </NavLink>
-            
-        </div>
+          ))}
+        </nav>
+      </div>
+    </>
+  );
+};
 
-        <div className="additem flex flex-col items-start w-full bg-green-400 mt-3">
-            <NavLink to='/coupons' className=' text-white flex items-center gap-3 p-2 justify-start w-full pl-5'>
-
-            <LuShoppingBag className='text-4xl ' />
-
-            <p className='font-semibold md:block hidden'>Coupons</p>
-
-            </NavLink>
-            
-        </div>
-
-    </div>
-  )
-}
-
-export default Sidebar
+export default Sidebar;

@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 import axiosInstance from '../api/axiosInstance';
+import { toast } from 'react-toastify';
 
 const StoreContext = createContext();
 
@@ -25,8 +26,9 @@ export const StoreProvider = ({ children }) => {
       const response = await axiosInstance.post(`/api/product/list`);
       setProducts(response.data.products);
       // localStorage.setItem('storeProducts', JSON.stringify(response.data.products));
-    } catch (err) {
-      setError(err);
+    } catch (error) {
+      setError(error);
+      toast.error(error?.response?.data?.message || error?.message || "Something went wrong");
     } finally {
       setLoading(false);
     }

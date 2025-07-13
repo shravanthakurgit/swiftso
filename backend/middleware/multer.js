@@ -3,7 +3,7 @@ import path from 'path';
 
 const storage = multer.diskStorage({
   destination: function (req, file, callback) {
-    callback(null, 'uploads/'); // or any folder where you want to store files
+    callback(null, 'uploads/'); //  folder location to store files
   },
   filename: function (req, file, callback) {
     const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);

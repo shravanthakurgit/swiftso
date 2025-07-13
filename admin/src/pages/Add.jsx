@@ -1,6 +1,5 @@
-import React, { useState, useRef } from 'react';
+import { useState, useRef } from 'react';
 import axios from 'axios';
-import { FaCloudUploadAlt } from 'react-icons/fa';
 import { backendUrl } from '../App';
 
 export default function Add({ token }) {

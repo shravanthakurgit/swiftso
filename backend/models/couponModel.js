@@ -1,4 +1,3 @@
-// models/Coupon.js
 import mongoose from "mongoose";
 
 const CouponSchema = new mongoose.Schema({
@@ -38,7 +37,7 @@ const CouponSchema = new mongoose.Schema({
     type: Date,
     required: true,
   },
-  usageLimit: Number, // max times this coupon can be used
+  usageLimit: Number, 
   usedCount: {
     type: Number,
     default: 0,
@@ -49,7 +48,7 @@ const CouponSchema = new mongoose.Schema({
   },
   usersUsed: {
     type: Map,
-    of: Number, // userId -> usage count
+    of: Number,
     default: {},
   },
 },{

@@ -23,6 +23,7 @@ const userOrderSchema = new mongoose.Schema(
   price: { type: Number },
   platform_Fee:{type: Number},
   delivery_Fee:{type: Number},
+  discount:{type:Number},
   totalAmount:{type: Number},
    },
     payment_id: {
