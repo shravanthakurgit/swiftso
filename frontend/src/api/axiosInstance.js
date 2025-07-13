@@ -5,7 +5,6 @@ const baseURL = process.env.REACT_APP_BACKEND_URL;
 
 const axiosInstance = axios.create({
   baseURL,
-   timeout: 5000,
   withCredentials: true,
 });
 
