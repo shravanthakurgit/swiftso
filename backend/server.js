@@ -14,20 +14,16 @@ import rateLimit from 'express-rate-limit';
 dotenv.config();
 
 
-
 const app = express();
 const port = process.env.PORT || 5000;
 
-// Database & Cloudinary
-
+app.set('trust proxy', 1);
 
 // Middleware
 const allowedOrigins = [
   process.env.FRONTEND_URL,
   process.env.ADMIN_FRONTEND_URL,
   process.env.PUBLIC_PORT,
-
- 
 ];
 
 app.use('/invoices', express.static(path.join(process.cwd(), 'invoices')));
