@@ -6,6 +6,7 @@ import addressModel from "../models/addressModel.js";
 import path from "path";
 import couponModel from "../models/couponModel.js";
 import { platform } from "os";
+import puppeteer from "puppeteer";
 import { customAlphabet } from 'nanoid';
 import dotenv from 'dotenv';
 dotenv.config();
