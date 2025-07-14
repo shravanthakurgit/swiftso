@@ -37,7 +37,6 @@ const Checkout = () => {
     if (!selectedAddress) {
       toast.warn("Please select a delivery address", {
         position: "top-center",
-        autoClose: 2000,
       });
       return;
     }
@@ -45,7 +44,6 @@ const Checkout = () => {
     if (!isCash) {
       toast.warn("Please select a payment method", {
         position: "top-center",
-        autoClose: 2000,
       });
       return;
     }

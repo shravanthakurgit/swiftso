@@ -52,6 +52,9 @@ function App() {
        closeOnClick
   pauseOnHover
   draggable={true}
+  autoClose={2000}
+  draggableDirection="x" 
+  hideProgressBar={true}
       />
       <BrowserRouter>
         <ScrollToTop />
