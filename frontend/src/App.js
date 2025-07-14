@@ -48,15 +48,16 @@ function App() {
 
   return (
     <div className="App">
-      <ToastContainer 
-       closeOnClick
+
+    <ToastContainer
+  autoClose={1500}
+  closeOnClick
   pauseOnHover
-  dismissible={true}
-  draggable={true}
-  autoClose={2000}
-  draggableDirection="x" 
-  hideProgressBar={true}
-      />
+  draggable
+  draggableDirection="x"
+  hideProgressBar
+/>
+
       <BrowserRouter>
         <ScrollToTop />
         <Header />
