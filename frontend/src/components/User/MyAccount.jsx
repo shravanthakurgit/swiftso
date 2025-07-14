@@ -96,18 +96,18 @@ const handleResendEmail = async () => {
   }, [isAnimating]);
 
 
-// useEffect(() => {
-//   const lastResendTime = localStorage.getItem("lastResendTime");
-//   if (lastResendTime) {
-//     const elapsed = Math.floor((Date.now() - parseInt(lastResendTime)) / 1000);
-//     const remaining = COOLDOWN_SECONDS - elapsed;
-//     if (remaining > 0) {
-//       setCooldown(remaining);
-//     } else {
-//       localStorage.removeItem("lastResendTime");
-//     }
-//   }
-// }, []);
+useEffect(() => {
+  const lastResendTime = localStorage.getItem("lastResendTime");
+  if (lastResendTime) {
+    const elapsed = Math.floor((Date.now() - parseInt(lastResendTime)) / 1000);
+    const remaining = COOLDOWN_SECONDS - elapsed;
+    if (remaining > 0) {
+      setCooldown(remaining);
+    } else {
+      localStorage.removeItem("lastResendTime");
+    }
+  }
+}, []);
 
 
   useEffect(() => {
