@@ -202,38 +202,44 @@ export const generateInvoiceForOrder = async (req, res) => {
     const user = await userModel.findById(userId);
     if (!user) return res.status(404).json({ success: false, message: "User not found" });
 
-    const invoiceData = {
-      paymentId: order.payment_id,
-      payment_method: order.payment_Method,
-      date: new Date(order.createdAt).toLocaleDateString(),
-      invoice_date: new Date().toLocaleDateString(),
-      customerName: `${user.first_name} ${user?.last_name || ''}`,
-      billing_address: {
-        name: order.deliver_address.name,
-        address: order.deliver_address.address,
-        address_2: order.deliver_address?.address_2 || '',
-        city: order.deliver_address.city,
-        state: order.deliver_address?.state || '',
-        country: order.deliver_address.country,
-        pincode: order.deliver_address.pincode,
-        phone: order.deliver_address.phone,
-        email: order.deliver_address?.email || '',
-        landmark: order.deliver_address?.landmark || ''
-      },
-      items: [{
-        name: order.product_details.name,
-        size: order.product_details.size,
-        quantity: order.product_details.quantity,
-        price: order.product_details.totalAmount,
-        originalPrice: order.product_details.price,
-        discount: order.product_details.discount,
-        deliveryFee: order.product_details.delivery_Fee
-      }],
-      subTotal: order.subTotalAmt,
-      deliveryFee: order.delivery_fee,
-      discountAmount: order.discountAmount,
-      total: order.totalAmt,
-    };
+   const product = order.product_details;
+
+const invoiceData = {
+  invoiceId: order.orderId,
+  paymentId: order.payment_id,
+  payment_method: order.payment_Method,
+  date: new Date(order.createdAt).toLocaleDateString(),
+  invoice_date: new Date().toLocaleDateString(),
+  customerName: `${user.first_name} ${user?.last_name || ''}`,
+  billing_address: {
+    name: order.deliver_address.name,
+    address: order.deliver_address.address,
+    address_2: order.deliver_address?.address_2 || '',
+    city: order.deliver_address.city,
+    state: order.deliver_address?.state || '',
+    country: order.deliver_address.country,
+    pincode: order.deliver_address.pincode,
+    phone: order.deliver_address.phone,
+    email: order.deliver_address?.email || '',
+    landmark: order.deliver_address?.landmark || ''
+  },
+  items: [
+    {
+      name: product.name,
+      size: product.size,
+      quantity: product.quantity,
+      price: Math.round(product.totalAmount),      
+      originalPrice: Math.round(product.price * product.quantity),
+      discount: product.discount,
+      deliveryFee: product.delivery_Fee
+    }
+  ],
+  subTotal: Math.round(product.price * product.quantity),  
+  discountAmount: product.discount,
+  deliveryFee: product.delivery_Fee,
+  total: product.totalAmount  
+};
+
 
     const invoicePath = await generateInvoice(invoiceData);
     const fileName = path.basename(invoicePath);
