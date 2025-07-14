@@ -51,6 +51,7 @@ function App() {
       <ToastContainer 
        closeOnClick
   pauseOnHover
+  dismissible={true}
   draggable={true}
   autoClose={2000}
   draggableDirection="x" 
