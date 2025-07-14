@@ -48,7 +48,11 @@ function App() {
 
   return (
     <div className="App">
-      <ToastContainer />
+      <ToastContainer 
+       closeOnClick
+  pauseOnHover
+  draggable={true}
+      />
       <BrowserRouter>
         <ScrollToTop />
         <Header />
