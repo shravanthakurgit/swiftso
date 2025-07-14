@@ -103,7 +103,7 @@ onClick={()=>navigate('/order-details',{
 
                   <div className="flex items-center gap-4 justify-end flex-wrap">
                   
-  <InvoiceButton orderId={item.orderId}/>
+  <InvoiceButton orderId={item.orderId} productId={item.productId}/>
 
 <button
   onClick={() => navigate('/order-details', { state: { orderId: item.orderId } })}
@@ -178,7 +178,7 @@ onClick={()=>navigate('/order-details',{
 
                       <div className="flex items-center gap-4 justify-end flex-wrap">
                   
-  <InvoiceButton orderId={item.orderId}/>
+  <InvoiceButton orderId={item.orderId} productId={item.productId}/>
 
 <button
   onClick={() => navigate('/order-details', { state: { orderId: item.orderId } })}

@@ -10,7 +10,7 @@ orderRouter.post('/cash-on-delivery',auth, cashOnDelivery)
 orderRouter.post('/get-orders',auth, getOrders)
 orderRouter.post('/get-order-details',auth, getSingleOrder)
 
-orderRouter.get('/invoice/:orderId',auth, generateInvoiceForOrder)
+orderRouter.get('/invoice/:orderId/:productId', auth, generateInvoiceForOrder);
 orderRouter.put('/update-status',auth, updateStatus)
 
 orderRouter.post('/admin-get-orders',authAdmin, fetchOrdersForAdmin)

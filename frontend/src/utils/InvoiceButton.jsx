@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import axiosInstance from '../api/axiosInstance';
 
-const InvoiceButton = ({ orderId }) => {
+const InvoiceButton = ({ orderId,productId }) => {
   const [loading, setLoading] = useState(false);
   const [invoiceUrl, setInvoiceUrl] = useState(null);
   const [error, setError] = useState("");
@@ -11,7 +11,7 @@ const InvoiceButton = ({ orderId }) => {
     setError("");
 
     try {
-      const response = await axiosInstance.get(`/api/order/invoice/${orderId}`);
+      const response = await axiosInstance.get(`/api/order/invoice/${orderId}/${productId}`,);
       if (response.data.success) {
         setInvoiceUrl(response.data.invoiceUrl);
         window.open(response.data.invoiceUrl, "_blank");

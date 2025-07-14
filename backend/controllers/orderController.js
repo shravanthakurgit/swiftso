@@ -179,17 +179,20 @@ export const cashOnDelivery = async (req, res) => {
 export const generateInvoiceForOrder = async (req, res) => {
   try {
     const userId = req.userId;
-    const { orderId } = req.params;
+   const { orderId, productId } = req.params;
     const forceRegenerate = req.query.force === 'true'; 
 
     if (!userId) return res.status(401).json({ success: false, message: "Unauthorized", userId: userId });
 
-    const orders = await userOrderModel.find({ orderId, userId }).populate("deliver_address");
-    if (!orders || orders.length === 0)
-      return res.status(404).json({ success: false, message: "Order not found" });
+const order = await userOrderModel.findOne({
+  productId,
+  orderId,
+  userId
+}).populate("deliver_address");
 
-    const order = orders[0];
-
+if (!order) {
+  return res.status(404).json({ success: false, message: "Order not found" });
+}
     // Only return cached version if force is not true
     if (order.invoice_receipt && !forceRegenerate) {
       return res.status(200).json({
@@ -229,15 +232,15 @@ const invoiceData = {
       size: product.size,
       quantity: product.quantity,
       price: Math.round(product.totalAmount),      
-      originalPrice: Math.round(product.price * product.quantity),
+      originalPrice: Math.round(product.price),
       discount: product.discount,
       deliveryFee: product.delivery_Fee
     }
   ],
-  subTotal: Math.round(product.price * product.quantity),  
+  subTotal: Math.round(product.price),  
   discountAmount: product.discount,
   deliveryFee: product.delivery_Fee,
-  total: product.totalAmount  
+  total: product.totalAmount
 };
 
 
@@ -246,7 +249,7 @@ const invoiceData = {
     const invoiceUrl = `${req.protocol}://${req.get('host')}/invoices/${fileName}`;
 
     // Save (or overwrite) invoice URL in DB
-    await userOrderModel.findOneAndUpdate({ orderId }, { invoice_receipt: invoiceUrl });
+await userOrderModel.findByIdAndUpdate(productId, { invoice_receipt: invoiceUrl });
 
     return res.status(200).json({
       success: true,
