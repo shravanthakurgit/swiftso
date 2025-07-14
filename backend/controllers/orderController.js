@@ -249,7 +249,7 @@ const invoiceData = {
     const invoiceUrl = `${req.protocol}://${req.get('host')}/invoices/${fileName}`;
 
     // Save (or overwrite) invoice URL in DB
-await userOrderModel.findByIdAndUpdate(productId, { invoice_receipt: invoiceUrl });
+await userOrderModel.findOneAndUpdate({productId:productId}, { invoice_receipt: invoiceUrl });
 
     return res.status(200).json({
       success: true,
