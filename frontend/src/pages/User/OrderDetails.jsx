@@ -204,7 +204,7 @@ const OrderDetails = () => {
           </div>
 
           <div className="flex p-2 ml-4 -mt-3">
-              <InvoiceButton orderId={item.orderId}/>
+              <InvoiceButton orderId={item.orderId} productId={item.productId}/>
           </div>
 
           {showAlert && (

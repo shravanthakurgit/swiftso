@@ -211,8 +211,8 @@ const invoiceData = {
   invoiceId: order.orderId,
   paymentId: order.payment_id,
   payment_method: order.payment_Method,
-  date: new Date(order.createdAt).toLocaleDateString(),
-  invoice_date: new Date().toLocaleDateString(),
+  date: new Date(order.createdAt).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' }),
+  invoice_date: new Date().toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' }),
   customerName: `${user.first_name} ${user?.last_name || ''}`,
   billing_address: {
     name: order.deliver_address.name,
