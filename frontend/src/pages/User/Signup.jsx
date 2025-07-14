@@ -75,10 +75,10 @@ export default function SignUp() {
         const { accessToken, refreshToken } = response.data.tokens;
 
         localStorage.setItem("accessToken", accessToken);
-        localStorage.setItem("refreshToken", refreshToken);
+        // localStorage.setItem("refreshToken", refreshToken);
       }
 
-      navigate("/");
+      navigate("/login");
     } catch (error) {
       setIsLoading(false);
       setIsSignuped(false);

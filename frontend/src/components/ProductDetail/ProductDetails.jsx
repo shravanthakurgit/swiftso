@@ -26,6 +26,8 @@ import RelatedProducts from "../Store/RelatedProducts";
 import ServiceCommitment from "../../utils/ServiceCommitment";
 import ShareProduct from "../../utils/ShareProduct";
 import ShopByCategory from "../Category/ShopByCategory";
+import { toast } from "react-toastify";
+import ConfirmAlert from "../../utils/ConfirmAlert";
 
 
 
@@ -103,7 +105,7 @@ const ProductDetails = () => {
 
   const [fullURL, setFullURL] = useState("");
   const [isAdded, setIsAdded] = useState(false);
-
+ const [showAlert, setShowAlert] = useState(false);
 
 
   useEffect(() => {
@@ -209,13 +211,16 @@ const handleAddToCart = async () => {
 );
      
          if(response){
-          alert("Removed SuccessFully")
+          toast.success(response?.data?.message || "Removed Successfully ")
          }
           
          } catch (err) {
-           const msg = err.response?.data?.message || "Failed to submit review";
-           alert(msg)
+           const msg = err.response?.data?.message || "Failed to remove review";
+           toast.error(msg)
+           
          } 
+
+         setShowAlert(false);
     }
 
   return (
@@ -393,10 +398,19 @@ const handleAddToCart = async () => {
                   <p className=" text-left max-h-[120px] overflow-y-scroll w-full">{review.comment}</p>
                 )}
 
+
+{showAlert && (
+  <ConfirmAlert 
+    message="Are you sure want to remove" 
+    hideAlert={() => setShowAlert(false)} 
+    runFunction={() => handleRemoveReview(review._id)} 
+  />
+)}
+
               
 {review.userId?._id && String(review.userId._id) === String(currentUserId) && (
   <button
-    onClick={() => handleRemoveReview(review._id)}
+    onClick={() => setShowAlert(true)}
     className="gap-2 justify-between flex items-center flex-wrap poppins text-[8px] font-semibold mt-2 absolute right-2 top-0  text-gray-700 bg-gray-200 p-1 rounded-full"
   >
     <FaTrash />
