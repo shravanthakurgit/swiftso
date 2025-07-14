@@ -2,21 +2,28 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axiosInstance from "../../api/axiosInstance";
 import InvoiceButton from "../../utils/InvoiceButton";
+import { toast } from "react-toastify";
 
 const Order = () => {
   const [orders, setOrders] = useState([]);
   const navigate = useNavigate();
+   const [loading, setLoading] = useState(true);
 
   const fetchOrder = async () => {
     try {
       const response = await axiosInstance.post("/api/order/get-orders", {
         withCredentials: true,
       });
+    
       if (response?.data?.orderList) {
         setOrders(response.data.orderList);
+         setLoading(false);
       }
     } catch (error) {
-      alert(error.message || "Error fetching orders");
+      toast.error(error.message || "Error fetching orders");
+       setLoading(false);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -24,10 +31,19 @@ const Order = () => {
     fetchOrder();
   }, []);
 
+   if (loading) {
+    return <p className="mt-4">Loading Orders. Please Wait...</p>; 
+  }
+
+    if (orders.length === 0) {
+    return <p className="mt-4">No orders found.</p>;
+  }
+
   return (
     <div className="min-h-screen bg-white px-4 py-8 sm:px-6 lg:px-8">
       <h1 className="text-2xl font-bold mb-6 most">My Orders</h1>
 
+      
       {/* Table View for md and up */}
       <div className="hidden md:block overflow-x-auto">
         <table className="min-w-full divide-y divide-gray-200">

@@ -36,10 +36,10 @@ import Return from "./components/Order/Return";
 
 function App() {
   const { setIsAuthenticated } = useAuth();
-  const [rateLimitError, setRateLimitError] = useState(false); // NEW
+  const [rateLimitError, setRateLimitError] = useState(false); 
 
   useEffect(() => {
-    setupInterceptors(setIsAuthenticated, setRateLimitError); // pass 2nd param
+    setupInterceptors(setIsAuthenticated, setRateLimitError); 
   }, [setIsAuthenticated]);
 
   if (rateLimitError) {
