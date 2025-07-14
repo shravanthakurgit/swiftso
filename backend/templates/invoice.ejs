@@ -109,9 +109,8 @@
         <tr>
           <th>Item</th>
           <th>Qty</th>
-          <th>Original Price</th>
-          <th>Discount</th>
-          <th>Final Price</th>
+          <th>Price</th>
+        
         </tr>
       </thead>
       <tbody>
@@ -120,8 +119,6 @@
             <td><%= item.name %></td>
             <td><%= item.quantity %></td>
             <td>₹<%= item.originalPrice %></td>
-            <td>- ₹<%= item.discount %></td>
-            <td>₹<%= item.price %></td>
           </tr>
         <% }) %>
       </tbody>
