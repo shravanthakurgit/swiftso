@@ -106,7 +106,7 @@ const items = cart.map(item => ({
     } else {
       setFinalTotal(totalBeforeDiscount);
     }
-  }, [cartTotal, totalCartQuantity,couponCode,totalBeforeDiscount]);
+  }, [cartTotal, totalCartQuantity,totalBeforeDiscount]);
 
   const removeCoupon = () => {
     resetCoupon();

@@ -7,10 +7,15 @@ const auth = async (req, res, next) => {
     const tokenFromHeader = bearerHeader && bearerHeader.split(' ')[1];
     const token = req.cookies?.accessToken || tokenFromHeader;
 
+    console.log("Authorization Header:", req.headers['authorization']);
+console.log("Cookies:", req.cookies);
+
+
     if (!token) {
       return res.status(401).json({
         message: "Unauthorized Access",
         success: false,
+        token:req.cookies?.accessToken,
       });
     }
 

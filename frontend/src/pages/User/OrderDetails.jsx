@@ -6,6 +6,7 @@ import { FiBox,FiMapPin, FiX, FiCheck } from "react-icons/fi";
 import ConfirmAlert from "../../utils/ConfirmAlert";
 import { slugify } from "../../utils/slugify";
 import { toast } from "react-toastify";
+import InvoiceButton from "../../utils/InvoiceButton";
 
 const OrderDetails = () => {
   const navigate = useNavigate();
@@ -83,6 +84,8 @@ const OrderDetails = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 p-4 md:p-8">
+
+     
       {orders.map((item, index) => (
         <div key={index} className="max-w-4xl mx-auto bg-white rounded-xl shadow-sm overflow-hidden">
           {/* Order Header */}
@@ -106,6 +109,8 @@ const OrderDetails = () => {
               />
               
               <div className="flex-1 space-y-2">
+
+               
                 <h3 
                   onClick={() => navigate(`/shop/product-details/order/${slugify(`${item.product_details.name}`)}/?id=${item.productId}`)}
                   className="font-medium text-gray-800 hover:text-blue-600 cursor-pointer transition-colors text-left"
@@ -194,6 +199,12 @@ const OrderDetails = () => {
                 Request Return
               </button>
             )}
+
+            
+          </div>
+
+          <div className="flex p-2 ml-4 -mt-3">
+              <InvoiceButton orderId={item.orderId}/>
           </div>
 
           {showAlert && (

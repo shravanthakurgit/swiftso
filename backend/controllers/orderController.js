@@ -5,50 +5,46 @@ import { generateInvoice } from "../utils/generateInvoice.js";
 import addressModel from "../models/addressModel.js";
 import path from "path";
 import couponModel from "../models/couponModel.js";
-import { platform } from "os";
-import puppeteer from "puppeteer";
 import { customAlphabet } from 'nanoid';
 import dotenv from 'dotenv';
 dotenv.config();
+
+
 
 export const cashOnDelivery = async (req, res) => {
   try {
     const userId = req.userId;
 
-   if (!userId) return res.status(401).json({ success: false, message: "Unauthorized" });
+    if (!userId) return res.status(401).json({ success: false, message: "Unauthorized" });
 
-      const user = await userModel.findById(userId)
-  
-
-if (!user) {
-  return res.status(404).json({ success: false, message: "Missing User" });
-}
-
+    const user = await userModel.findById(userId);
+    if (!user) return res.status(404).json({ success: false, message: "Missing User" });
 
     if (!user.verified_email) {
-  return res.status(401).json({
-    success: false,
-    message: "Email not verified ! Go to Profile & Verify First",
-  });
-}
+      return res.status(401).json({
+        success: false,
+        message: "Email not verified! Go to Profile & Verify First",
+      });
+    }
 
     const { itemList, address_id, couponCode } = req.body;
 
-    
-    if (!itemList || itemList.length === 0) return res.status(400).json({ success: false, message: "No items in cart" });
-    if (!address_id) return res.status(400).json({ success: false, message: "Address is required" });
+    if (!itemList || itemList.length === 0)
+      return res.status(400).json({ success: false, message: "No items in cart" });
+
+    if (!address_id)
+      return res.status(400).json({ success: false, message: "Address is required" });
 
     const subTotal = itemList.reduce((acc, item) => acc + item.price * item.quantity, 0);
     const totalQuantity = itemList.reduce((acc, item) => acc + item.quantity, 0);
 
-    // Delivery Fee
+   
     let DELIVERY_FEE = 0;
     const DELIVERY_FEE_THRESHOLD = Number(process.env.APP_DELIVERY_FEE_THRESHOLD);
     if (subTotal < DELIVERY_FEE_THRESHOLD) {
       DELIVERY_FEE = Number(process.env.APP_DELIVERY_FEE);
     }
 
-    // Coupon logic
     let discountAmount = 0;
     let discountType = null;
     let overrideTotal = null;
@@ -57,20 +53,28 @@ if (!user) {
     if (couponCode) {
       coupon = await couponModel.findOne({ code: couponCode });
 
-      if (!coupon) return res.status(400).json({ success: false, message: 'Invalid coupon' });
+      if (!coupon)
+        return res.status(400).json({ success: false, message: "Invalid coupon" });
+
       if (coupon.expiresAt && new Date(coupon.expiresAt) < new Date())
-        return res.status(400).json({ success: false, message: 'Coupon expired' });
+        return res.status(400).json({ success: false, message: "Coupon expired" });
 
       if (coupon.minCartValue && subTotal < coupon.minCartValue)
-        return res.status(400).json({ success: false, message: `Minimum cart value should be ₹${coupon.minCartValue}` });
+        return res.status(400).json({
+          success: false,
+          message: `Minimum cart value should be ₹${coupon.minCartValue}`,
+        });
 
       if (coupon.maxCartQuantity && totalQuantity > coupon.maxCartQuantity)
-        return res.status(400).json({ success: false, message: `Maximum cart quantity allowed is ${coupon.maxCartQuantity}` });
+        return res.status(400).json({
+          success: false,
+          message: `Maximum cart quantity allowed is ${coupon.maxCartQuantity}`,
+        });
 
       if (coupon.buyAny === true && totalQuantity <= coupon.maxCartQuantity) {
         DELIVERY_FEE = 0;
         overrideTotal = Math.round(coupon.buyAnyPrice + DELIVERY_FEE);
-        discountAmount = Math.max((subTotal + DELIVERY_FEE) - overrideTotal, 0);
+        discountAmount = Math.max(subTotal + DELIVERY_FEE - overrideTotal, 0);
         discountType = "buyAny";
       } else {
         discountType = coupon.discountType;
@@ -82,90 +86,47 @@ if (!user) {
       }
     }
 
-    // Distribute discount per item
-    const updatedItemList = itemList.map(item => {
+    const updatedItemList = itemList.map((item) => {
       const itemTotal = item.price * item.quantity;
       const itemShare = itemTotal / subTotal;
       const itemDiscount = overrideTotal !== null ? 0 : itemShare * discountAmount;
       return {
         ...item,
         totalPriceBeforeDiscount: itemTotal,
-        itemDiscount: itemDiscount,
+        itemDiscount,
         totalPriceAfterDiscount: itemTotal - itemDiscount,
       };
     });
 
-   
     let perItemDeliveryFees = Array(updatedItemList.length).fill(0);
     if (subTotal < DELIVERY_FEE_THRESHOLD) {
       perItemDeliveryFees[0] = DELIVERY_FEE;
     }
 
-    const totalAmount = overrideTotal !== null
-      ? overrideTotal
-      : Math.round(
-          updatedItemList.reduce((acc, item, index) =>
-            acc +
-            item.totalPriceAfterDiscount +
-            perItemDeliveryFees[index], 0)
-        );
-
-  
-
-
-
+    const totalAmount =
+      overrideTotal !== null
+        ? overrideTotal
+        : Math.round(
+            updatedItemList.reduce(
+              (acc, item, index) =>
+                acc + item.totalPriceAfterDiscount + perItemDeliveryFees[index],
+              0
+            )
+          );
 
     const address = await addressModel.findById(address_id);
-    if (!address) return res.status(401).json({ success: false, message: "Address not found." });
+    if (!address)
+      return res.status(401).json({ success: false, message: "Address not found." });
 
-    const billing_address = {
-      name: address.name,
-      address: address.address,
-      address_2: address?.address_2 || '',
-      city: address.city,
-      state: address?.state || '',
-      country: address.country,
-      pincode: address.pincode,
-      phone: address.phone,
-      email: address?.email || '',
-      landmark: address?.landmark || ''
-    };
+    const generateDigit = customAlphabet("0123456789", 1);
+    const generateRest = customAlphabet("ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789", 10);
 
-    const invoiceData = {
-      paymentId: `COD${Date.now()}`,
-      payment_method: 'COD',
-      date: new Date().toLocaleDateString(),
-      invoice_date: new Date().toLocaleDateString(),
-      customerName: `${user.first_name} ${user?.last_name || ''}`,
-      billing_address,
-      items: updatedItemList.map((item, index) => ({
-        name: item.name,
-        size: item.size,
-        quantity: item.quantity,
-        price: Math.round(item.totalPriceAfterDiscount),
-        originalPrice: item.totalPriceBeforeDiscount,
-        discount: Math.round(item.itemDiscount),
-        deliveryFee: perItemDeliveryFees[index]
-      })),
-      subTotal,
-      deliveryFee: perItemDeliveryFees.reduce((sum, fee) => sum + fee, 0),
-      discountAmount: Math.round(discountAmount),
-      total: totalAmount,
-    };
-
-    const invoicePath = await generateInvoice(invoiceData);
-    const fileName = path.basename(invoicePath);
-    const invoiceUrl = `${req.protocol}://${req.get('host')}/invoices/${fileName}`;
-
-const generateDigit = customAlphabet('0123456789', 1); // First char: digit
-const generateRest = customAlphabet('ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789', 10); 
-
+    const paymentId = `COD${Date.now()}`;
 
     const orders = updatedItemList.map((item, index) => {
       const deliveryFee = perItemDeliveryFees[index];
       const productBaseTotal = item.totalPriceAfterDiscount;
       const productTotal = Math.round(productBaseTotal + deliveryFee);
-      
 
       return {
         userId,
@@ -181,15 +142,15 @@ const generateRest = customAlphabet('ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789', 10);
           discount: Math.round(item.itemDiscount),
           totalAmount: productTotal,
         },
-        payment_id: invoiceData.paymentId,
-        payment_Method: 'COD',
+        payment_id: paymentId,
+        payment_Method: "COD",
         deliver_address: address_id,
         subTotalAmt: subTotal,
         totalAmt: totalAmount,
         delivery_fee: deliveryFee,
         discountAmount: Math.round(discountAmount),
         discountType,
-        invoice_receipt: invoiceUrl,
+        invoice_receipt: null, 
       };
     });
 
@@ -200,17 +161,99 @@ const generateRest = customAlphabet('ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789', 10);
       success: true,
       message: "Order placed successfully",
       orderDetails: orders,
-      invoice: invoiceUrl,
+      invoice: null, 
       totalAmount,
       discountApplied: !!couponCode,
       discountAmount: Math.round(discountAmount),
     });
-
   } catch (error) {
     console.error("COD error:", error);
     return res.status(500).json({ success: false, message: error.message });
   }
 };
+
+
+
+
+
+export const generateInvoiceForOrder = async (req, res) => {
+  try {
+    const userId = req.userId;
+    const { orderId } = req.params;
+    const forceRegenerate = req.query.force === 'true'; 
+
+    if (!userId) return res.status(401).json({ success: false, message: "Unauthorized", userId: userId });
+
+    const orders = await userOrderModel.find({ orderId, userId }).populate("deliver_address");
+    if (!orders || orders.length === 0)
+      return res.status(404).json({ success: false, message: "Order not found" });
+
+    const order = orders[0];
+
+    // Only return cached version if force is not true
+    if (order.invoice_receipt && !forceRegenerate) {
+      return res.status(200).json({
+        success: true,
+        invoiceUrl: order.invoice_receipt,
+        fromCache: true
+      });
+    }
+
+    const user = await userModel.findById(userId);
+    if (!user) return res.status(404).json({ success: false, message: "User not found" });
+
+    const invoiceData = {
+      paymentId: order.payment_id,
+      payment_method: order.payment_Method,
+      date: new Date(order.createdAt).toLocaleDateString(),
+      invoice_date: new Date().toLocaleDateString(),
+      customerName: `${user.first_name} ${user?.last_name || ''}`,
+      billing_address: {
+        name: order.deliver_address.name,
+        address: order.deliver_address.address,
+        address_2: order.deliver_address?.address_2 || '',
+        city: order.deliver_address.city,
+        state: order.deliver_address?.state || '',
+        country: order.deliver_address.country,
+        pincode: order.deliver_address.pincode,
+        phone: order.deliver_address.phone,
+        email: order.deliver_address?.email || '',
+        landmark: order.deliver_address?.landmark || ''
+      },
+      items: [{
+        name: order.product_details.name,
+        size: order.product_details.size,
+        quantity: order.product_details.quantity,
+        price: order.product_details.totalAmount,
+        originalPrice: order.product_details.price,
+        discount: order.product_details.discount,
+        deliveryFee: order.product_details.delivery_Fee
+      }],
+      subTotal: order.subTotalAmt,
+      deliveryFee: order.delivery_fee,
+      discountAmount: order.discountAmount,
+      total: order.totalAmt,
+    };
+
+    const invoicePath = await generateInvoice(invoiceData);
+    const fileName = path.basename(invoicePath);
+    const invoiceUrl = `${req.protocol}://${req.get('host')}/invoices/${fileName}`;
+
+    // Save (or overwrite) invoice URL in DB
+    await userOrderModel.findOneAndUpdate({ orderId }, { invoice_receipt: invoiceUrl });
+
+    return res.status(200).json({
+      success: true,
+      invoiceUrl,
+      fromCache: false
+    });
+
+  } catch (error) {
+    console.error("Invoice Generation Error:", error);
+    return res.status(500).json({ success: false, message: error.message });
+  }
+};
+
 
 
 

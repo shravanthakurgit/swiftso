@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axiosInstance from "../../api/axiosInstance";
+import InvoiceButton from "../../utils/InvoiceButton";
 
 const Order = () => {
   const [orders, setOrders] = useState([]);
@@ -85,19 +86,7 @@ onClick={()=>navigate('/order-details',{
 
                   <div className="flex items-center gap-4 justify-end flex-wrap">
                   
-  <a
-  href={item.invoice_receipt}
-  download
-  className="relative text-xs font-medium px-4 py-2 rounded-full group"
->
-  <span className="absolute inset-0 border border-gray-200 rounded-full transition-all duration-300 group-hover:border-gray-300"></span>
-  <span className="relative flex items-center justify-center gap-1 text-gray-600 group-hover:text-gray-800 transition-colors">
-    <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-    </svg>
-    Invoice
-  </span>
-</a>
+  <InvoiceButton orderId={item.orderId}/>
 
 <button
   onClick={() => navigate('/order-details', { state: { orderId: item.orderId } })}
@@ -172,19 +161,7 @@ onClick={()=>navigate('/order-details',{
 
                       <div className="flex items-center gap-4 justify-end flex-wrap">
                   
-  <a
-  href={item.invoice_receipt}
-  download
-  className="relative text-xs font-medium px-4 py-2 rounded-full group"
->
-  <span className="absolute inset-0 border border-gray-200 rounded-full transition-all duration-300 group-hover:border-gray-300"></span>
-  <span className="relative flex items-center justify-center gap-1 text-gray-600 group-hover:text-gray-800 transition-colors">
-    <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-    </svg>
-    Invoice
-  </span>
-</a>
+  <InvoiceButton orderId={item.orderId}/>
 
 <button
   onClick={() => navigate('/order-details', { state: { orderId: item.orderId } })}
