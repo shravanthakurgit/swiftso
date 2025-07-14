@@ -394,14 +394,15 @@ const handleAddToCart = async () => {
                 )}
 
               
-{String(review.userId._id) === String(currentUserId) && (
+{review.userId?._id && String(review.userId._id) === String(currentUserId) && (
   <button
     onClick={() => handleRemoveReview(review._id)}
     className="gap-2 justify-between flex items-center flex-wrap poppins text-[8px] font-semibold mt-2 absolute right-2 top-0  text-gray-700 bg-gray-200 p-1 rounded-full"
   >
-   <FaTrash/>
+    <FaTrash />
   </button>
 )}
+
 
               </div>
              
