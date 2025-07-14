@@ -7,8 +7,8 @@ const HomePage = () => {
     <div className="mx-auto">
       <HeroSection />
       <ShopByCategory />
-      <HomeSection title1="Mens'" title2="Wear" Category="men" />
-      <HomeSection title1="Womens'" title2="Wear" Category="women" />
+      <HomeSection title1="Men's'" title2="Wear" Category="men" />
+      <HomeSection title1="Women's'" title2="Wear" Category="women" />
       <HomeSection title1="Kids'" title2="Wear" Category="kids" />
     </div>
   );
