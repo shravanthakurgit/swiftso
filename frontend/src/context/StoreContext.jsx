@@ -25,13 +25,14 @@ export const StoreProvider = ({ children }) => {
     try {
       const response = await axiosInstance.post(`/api/product/list`);
       setProducts(response.data.products);
+      if(response){
+        setLoading(false)
+      }
       // localStorage.setItem('storeProducts', JSON.stringify(response.data.products));
     } catch (error) {
       setError(error);
       toast.error(error?.response?.data?.message || error?.message || "Something went wrong");
-    } finally {
-      setLoading(false);
-    }
+    } 
   };
 
   return (

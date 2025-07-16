@@ -38,10 +38,12 @@ const sortOptions = [
 ];
 
 const Store = () => {
-  const { products } = useStore();
+  const { products, loading } = useStore();
   const isOnline = UseNetworkStatus();
   const location = useLocation();
   const navigate = useNavigate();
+
+   console.log(loading)
 
   const [currentPage, setCurrentPage] = useState(1);
 const productsPerPage = 25;
@@ -165,15 +167,16 @@ const productsPerPage = 25;
     setSortOption(sortQuery);
   }, [location.search]);
 
-  if (!isOnline) {
+  if (!isOnline || loading) {
     return <CardEffect />;
   }
 
-  if (sortedProducts.length <= 0) {
+  if (sortedProducts?.length <= 0) {
     return (
       <p className="monst text-gray-400 font-semibold">No Products Found</p>
     );
   }
+ 
 
 
   const indexOfLastProduct = currentPage * productsPerPage;
@@ -476,6 +479,8 @@ const currentProducts = sortedProducts.slice(indexOfFirstProduct, indexOfLastPro
                       </span>
                     </div>
                   )}
+
+                  {loading && (<CardEffect/>)}
 
                 {currentProducts.map((product) => (
   <ProductCard key={product._id} product={product} basePath="/shop" />

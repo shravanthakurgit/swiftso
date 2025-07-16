@@ -6,13 +6,13 @@ import SingleCardEffect from "../ShimmerEffect/SingleCardEffect";
 
 const HomeSectionCard = ({ title1, title2, Category }) => {
   const isOnline = UseNetworkStatus();
-  const { products } = useStore();
+  const { products,loading } = useStore();
   // Ensure case-insensitive comparison for category
   let productsList = products?.filter(
     (product) => product.category.toLowerCase() === Category.toLowerCase()
   );
 
-  if (!isOnline) {
+  if (!isOnline || loading) {
     return (
       <div className="flex flex-col mt-10 px-4">
         <Title title1={title1} title2={title2} />

@@ -9,6 +9,7 @@ export const refreshAccessToken = async () => {
     }, {withCredentials: true});
     return res.data?.accessToken;
   } catch (err) {
+   
     return null;
   }
 };

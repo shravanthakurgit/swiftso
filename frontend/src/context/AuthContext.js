@@ -22,6 +22,7 @@ export const AuthProvider = ({ children }) => {
       }
 
       const res = await axiosInstance.post("/api/user/profile");
+      console.log(accessToken)
 
       if (res?.data?.success) {
         setIsAuthenticated(true);
