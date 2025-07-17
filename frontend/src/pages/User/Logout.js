@@ -28,7 +28,7 @@ setLoading(true)
 setIsAuthenticated(false);
       navigate("/");
       } catch (err) {
-        toast.error("Error logging out:", err);
+        toast.error(err?.message || "Error logging out:", err);
         setLoading(false)
       }
 
