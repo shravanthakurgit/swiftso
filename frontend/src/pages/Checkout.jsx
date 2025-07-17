@@ -1,6 +1,6 @@
 import { useState } from "react";
 import Address from "../components/User/Address";
-import AddAddress from "../components/User/AddAddress";
+// import AddAddress from "../components/User/AddAddress";
 import { useLocation, useNavigate } from "react-router-dom";
 import { BiSolidOffer } from "react-icons/bi";
 import { useUserData } from "../context/UserContext";
@@ -108,7 +108,6 @@ const Checkout = () => {
         {/* address */}
         <div className="flex flex-col items-center flex-1">
 
-          <AddAddress />
           <Address />
 
         </div>

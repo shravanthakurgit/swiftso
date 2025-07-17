@@ -7,6 +7,7 @@ import { IoMdTrash } from "react-icons/io";
 import ConfirmAlert from "../../utils/ConfirmAlert";
 import { toast } from "react-toastify";
 import axiosInstance from "../../api/axiosInstance";
+import AddAddress from "./AddAddress";
 
 
 const Address = () => {
@@ -56,12 +57,14 @@ const Address = () => {
   }, [selectedAddressIndex, userAddress]);
 
   return (
-    <div className="flex flex-col mt-2 w-full">
+    <div className="flex flex-col mt-2 w-full mx-auto items-center gap-3">
       {/* Address Selection */}
-      <h2 className="text-xl font-semibold mb-4">
+      <h2 className="text-xl font-semibold">
         {userAddress.length > 1 ? `Addresses` : "Address"}
       </h2>
-      <div className="max-h-[420px] overflow-y-scroll !text-[9px] px-5 w-full">
+
+      <AddAddress/>
+      <div className="max-h-[420px] overflow-y-scroll !text-[9px]  px-2 w-full">
         {userAddress.length > 0 ? (
           <div className="flex flex-row flex-wrap gap-2 justify-center">
             {userAddress.map((add, index) => (
