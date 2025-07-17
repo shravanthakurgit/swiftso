@@ -5,7 +5,6 @@ import { useAuth } from '../../context/AuthContext'
 
 
 const Footer = () => {
-  console.log("Admin URL:", process.env.REACT_APP_ADMIN_URL);
 
 
   const {userData}= useAuth();
@@ -131,8 +130,7 @@ const Footer = () => {
 
         </div>
         <div className="py-6 bg-black dark:bg-gray-900 md:flex md:items-center md:justify-between w-full text-white px-8">
-            <span cla
-            ssName="text-sm sm:text-center">© 2025 <NavLink to='/'>SwiftSo™</NavLink>. All Rights Reserved.
+            <span className="text-sm sm:text-center">© 2025 <NavLink to='/'>SwiftSo™</NavLink>. All Rights Reserved.
             </span>
             <div className="flex mt-4 justify-center sm:justify-center md:mt-0 space-x-5 rtl:space-x-reverse lg:mx-8">
 
