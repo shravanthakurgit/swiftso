@@ -7,6 +7,7 @@ import { FaRegCircleCheck } from "react-icons/fa6";
 import { useEffect } from "react";
 import { useAuth } from "../../context/AuthContext";
 import { LikedContext } from "../../context/LikedContext";
+import Loading from "../../utils/Loading";
 
 export default function Login() {
   const { isAuthenticated, setIsAuthenticated } = useAuth();
@@ -85,18 +86,13 @@ export default function Login() {
   return (
     <div className=" pb-6 flex items-start mt-6 justify-center px-4 py-2">
       {isLoading && (
-        <div className=" fixed text-center text-white font-semibold inset-0 z-50 bg-black bg-opacity-80 flex justify-center items-center ">
-          <div className="absolute flex justify-center items-center gap-4">
-            Loging in. Please wait..{" "}
-            <AiOutlineLoading3Quarters className="animate-spin" />
-          </div>
-        </div>
+        <Loading message="Loging in. Please wait.."/>
       )}
 
       {isSignuped && (
         <div className=" fixed text-center m-auto text-white font-semibold inset-0 z-50 bg-black bg-opacity-80 flex justify-center items-center ">
           <div className="absolute  flex justify-center items-center gap-4">
-            LogedIn SuccessFully <FaRegCircleCheck />
+            Login SuccessFull <FaRegCircleCheck />
           </div>
           <button
             onClick={() => setIsSignuped(false)}

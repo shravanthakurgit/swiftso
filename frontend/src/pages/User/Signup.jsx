@@ -7,6 +7,7 @@ import { FaRegCircleCheck } from "react-icons/fa6";
 import { useEffect } from "react";
 import { backendUrl } from "../../utils/backendUrl";
 import { useAuth } from "../../context/AuthContext";
+import Loading from "../../utils/Loading";
 
 export default function SignUp() {
   const navigate = useNavigate();
@@ -63,6 +64,7 @@ export default function SignUp() {
       );
       setIsSignuped(true);
       setErrorMessage("");
+      setIsLoading(false);
 
       await new Promise((resolve) => {
         setTimeout(() => {
@@ -84,7 +86,7 @@ export default function SignUp() {
       setIsSignuped(false);
       const message = error.response?.data?.message || error.message;
       setErrorMessage(message);
-      setTimeout(() => setErrorMessage(""), 4000);
+      setTimeout(() => setErrorMessage(""), 5000);
     } finally {
       setIsLoading(false);
     }
@@ -93,28 +95,27 @@ export default function SignUp() {
   return (
     <div className="pb-6 flex items-start mt-6 justify-center px-4 py-2">
       {isLoading && (
-        <div className=" fixed text-center text-white font-semibold inset-0 z-50 bg-black bg-opacity-50 flex justify-center items-center ">
-          <div className="absolute flex justify-center items-center gap-4 bg-green-600 p-6 rounded-md  border border-white ">
-            Registering. Please wait..{" "}
-            <AiOutlineLoading3Quarters className="animate-spin" />
-          </div>
-        </div>
+       <Loading message='Registering Please Wait...'/>
       )}
 
       {isSignuped && (
-        <div className=" fixed text-center m-auto text-white font-semibold inset-0 z-50 bg-black bg-opacity-80 flex justify-center items-center ">
+        <div className=" fixed text-center m-auto text-white font-semibold inset-0 z-50 bg-black bg-opacity-80 flex justify-center items-center backdrop-blur-sm ">
+          
           <div className="absolute  flex justify-center items-center gap-4 ">
             Registered SuccessFully <FaRegCircleCheck />
           </div>
 
-          <div className=" flex items-center  gap-3  px-4 absolute top-[32%] bg-green-500 border p-2 rounded-md">
-            <p>A verification email sent to you. </p>
+          <div className=" flex flex-col items-center  gap-3  px-4 absolute top-[32%] bg-white text-green-600 monst p-2 rounded-md  justify-center text-center py-6 text-xs ">
+            <div className="flex items-center gap-4 ">
+ <p>A verification email sent to you. </p>
             <MailCheck className="size-[20px] ping-once" />
+            </div>
+           <p className="bg-red-100 p-2 rounded border border-red-600 text-red-600">Also Check Spam Folder</p>
           </div>
 
           <button
             onClick={() => {
-              navigate("/");
+              navigate("/login");
               setIsSignuped(false);
             }}
             className="absolute top-[60%] p-1 border px-4 w-[150px] rounded-full monst text-xs"

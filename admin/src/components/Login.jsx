@@ -14,7 +14,7 @@ export default function Login({ setToken }) {
     e.preventDefault();
     try {
       const response = await axios.post(`${backendUrl}${adminUrl}`, { email, password });
-      console.log(response)
+      
 
       if (response.data.success) {
         setToken(response.data.token);

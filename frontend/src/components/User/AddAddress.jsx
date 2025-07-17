@@ -4,10 +4,12 @@ import axiosInstance from "../../api/axiosInstance";
 import { useUserData } from "../../context/UserContext";
 import { refreshAccessToken } from "../../auth/authService";
 import { IoIosClose } from "react-icons/io";
+import Loading from "../../utils/Loading";
 
 export default function AddAddress() {
   const { fetchUserDetails } = useUserData();
   const [open, setOpen] = useState(false);
+  const [loading, setLoading] = useState(false)
 
   const {
     register,
@@ -18,6 +20,7 @@ export default function AddAddress() {
   const onSubmit = async (data, e) => {
     e.preventDefault();
     try {
+      setLoading(true)
       await refreshAccessToken();
 
       const response = await axiosInstance.post(
@@ -53,10 +56,13 @@ export default function AddAddress() {
       console.error("Submit error:", error);
       alert("Failed to add address.");
     }
+    setLoading(false)
   };
 
   return (
     <>
+   
+
       <button
         onClick={() => setOpen(true)}
         className="bg-blue-100 text-blue-500 border border-purple-400 px-4 py-2 rounded hover:bg-blue-200 w-[95%] mt-4 monst"
@@ -66,6 +72,11 @@ export default function AddAddress() {
 
       {open && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 px-4">
+
+{loading &&(
+        <Loading message='Adding Address...'/>
+      )}
+
           <div className="bg-white rounded-xl max-w-2xl w-full p-6 overflow-y-auto max-h-[90vh] shadow-lg">
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-xl font-semibold monst">Add New Address</h2>

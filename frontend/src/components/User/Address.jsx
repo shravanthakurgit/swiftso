@@ -61,7 +61,7 @@ const Address = () => {
       <h2 className="text-xl font-semibold mb-4">
         {userAddress.length > 1 ? `Addresses` : "Address"}
       </h2>
-      <div className="max-h-[150px] overflow-y-scroll !text-[9px] px-5 w-full">
+      <div className="max-h-[420px] overflow-y-scroll !text-[9px] px-5 w-full">
         {userAddress.length > 0 ? (
           <div className="flex flex-row flex-wrap gap-2 justify-center">
             {userAddress.map((add, index) => (

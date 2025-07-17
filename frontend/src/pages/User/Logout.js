@@ -5,13 +5,14 @@ import { useAuth } from '../../context/AuthContext';
 import { backendUrl } from '../../utils/backendUrl';
 import { LikedContext } from '../../context/LikedContext';
 import { toast } from 'react-toastify';
+import Loading from '../../utils/Loading';
 // import { useCart } from '../../context/CartContext';
 
 
 
 const Logout = () => {
   const navigate = useNavigate();
-  const { setIsAuthenticated } = useAuth();
+  const { setIsAuthenticated, isAuthenticated } = useAuth();
   const {syncLikedItems}= useContext(LikedContext);
   const [loading, setLoading] = useState(false)
 
@@ -34,17 +35,15 @@ setIsAuthenticated(false);
 
      setLoading(false)
     };
+    if(isAuthenticated){
+  logoutUser();
+    }
 
-    logoutUser();
-  }, [navigate, setIsAuthenticated]);
+  
+  }, [navigate, setIsAuthenticated, isAuthenticated]);
 
   return loading ? (
-  <div className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-80 z-50">
-    <div className="text-center">
-      <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-white mx-auto mb-6"></div>
-      <p className="text-white text-md font-semibold tracking-wide monst">Logging you out...</p>
-    </div>
-  </div>
+ <Loading message='Logging you out...'/>
 ) : null;
 
 };

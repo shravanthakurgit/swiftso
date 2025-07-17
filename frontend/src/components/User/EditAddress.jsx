@@ -6,10 +6,12 @@ import { refreshAccessToken } from "../../auth/authService";
 import { MdEdit } from "react-icons/md";
 import { IoIosClose } from "react-icons/io";
 import { toast } from "react-toastify";
+import Loading from "../../utils/Loading";
 
 export default function EditAddress({data,close}) {
     const {fetchUserDetails} = useUserData();
   const [open, setOpen] = useState(true);
+  const [loading, setLoading] = useState(false)
 
   const {
     register,
@@ -35,7 +37,7 @@ export default function EditAddress({data,close}) {
   const onSubmit = async (data,e) => {
     e.preventDefault()
   try {
-
+setLoading(true);
     await refreshAccessToken();
 
     const response = await axiosInstance.put(
@@ -72,6 +74,7 @@ export default function EditAddress({data,close}) {
   } catch (error) {
    toast.error(error);
   }
+  setLoading(false);
 };
 
   return (
@@ -80,6 +83,10 @@ export default function EditAddress({data,close}) {
 
       {open && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 px-4 text-sm">
+
+          {loading &&(
+        <Loading message='Updating Address...'/>
+      )}
           <div className="bg-white rounded-xl max-w-2xl w-full p-6 overflow-y-auto max-h-[90vh] shadow-lg">
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-xl font-semibold flex items-center gap-2">Edit Address <MdEdit/> </h2>
