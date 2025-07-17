@@ -118,6 +118,9 @@ export const cashOnDelivery = async (req, res) => {
     if (!address)
       return res.status(401).json({ success: false, message: "Address not found." });
 
+
+    
+
     const generateDigit = customAlphabet("0123456789", 1);
     const generateRest = customAlphabet("ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789", 10);
 
@@ -144,7 +147,19 @@ export const cashOnDelivery = async (req, res) => {
         },
         payment_id: paymentId,
         payment_Method: "COD",
-        deliver_address: address_id,
+        deliver_address: {
+  name: address.name,
+  address: address.address,
+  address_2: address?.address_2 || '',
+  city: address.city,
+  state: address?.state || '',
+  country: address.country,
+  pincode: address.pincode,
+  phone: address.phone,
+  email: address?.email || '',
+  landmark: address?.landmark || '',
+},
+
         subTotalAmt: subTotal,
         totalAmt: totalAmount,
         delivery_fee: deliveryFee,

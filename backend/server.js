@@ -22,26 +22,27 @@ app.set('trust proxy', 1);
 connectDB();
 connectCloudinary();
 
+app.use('/invoices', express.static(path.join(process.cwd(), 'invoices')));
+
 // Middleware
 const allowedOrigins = [
   process.env.FRONTEND_URL,
   process.env.ADMIN_FRONTEND_URL,
-  process.env.PUBLIC_PORT,
 ];
-
-app.use('/invoices', express.static(path.join(process.cwd(), 'invoices')));
 
 app.use(cors({
   origin: function (origin, callback) {
     if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      console.error('Blocked by CORS:', origin);
-      callback(new Error('Not allowed by CORS'));
+      return callback(null, true);
     }
+    console.warn(`CORS blocked origin: ${origin}`);
+    return callback(new Error('Not allowed by CORS'));
   },
   credentials: true,
+  optionsSuccessStatus: 200, 
 }));
+
+// app.options('*', cors());
 
 app.use(express.json());
 

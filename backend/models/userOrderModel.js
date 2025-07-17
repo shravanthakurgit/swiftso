@@ -35,9 +35,18 @@ const userOrderSchema = new mongoose.Schema(
       default: "",
     },
     deliver_address: {
-      type: mongoose.Schema.ObjectId,
-      ref: "address",
-    },
+  name: String,
+  address: String,
+  address_2: String,
+  city: String,
+  state: String,
+  country: String,
+  pincode: String,
+  phone: String,
+  email: String,
+  landmark: String
+},
+
     order_status: {
       type: String,
       enum : ['delivered','cancelled','pending','placed','returned','refunded'],

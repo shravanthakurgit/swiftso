@@ -16,7 +16,9 @@ export const UserDetailsProvider = ({ children }) => {
   const fetchUserDetails = async () => {
     try {
       if(isAuthenticated){
-        const response = await axiosInstance.post(`${backendUrl}/api/user/profile`, {
+        
+      }
+      const response = await axiosInstance.post(`${backendUrl}/api/user/profile`, {
         withCredentials: true,
       });
 
@@ -24,9 +26,6 @@ export const UserDetailsProvider = ({ children }) => {
         setUserData(response.data.user);
         setUserAddress(response.data.user.address || []);
       }
-
-      }
-      
     } catch (error) {
       //  toast.error(error?.response?.data?.message || error?.message || "Something went wrong");
       return null;

@@ -21,6 +21,8 @@ export const AuthProvider = ({ children }) => {
         return;
       }
 
+      
+
       const res = await axiosInstance.post("/api/user/profile");
       console.log(accessToken)
 
