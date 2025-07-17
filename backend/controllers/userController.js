@@ -754,6 +754,56 @@ if(!_id ){
   }
 };
 
+const removeAddress = async (req, res) => {
+  try {
+    const userId = req.userId;
+    const { addressId } = req.body;
+
+    if (!userId) {
+      return res.status(401).json({
+        success: false,
+        message: "Unauthorized access!",
+      });
+    }
+
+    if (!addressId) {
+      return res.status(400).json({
+        success: false,
+        message: "Addess Id Not Found",
+      });
+    }
+
+    // Delete the address document
+    const removedAddress = await addressModel.findByIdAndDelete(addressId);
+
+    if (!removedAddress) {
+      return res.status(404).json({
+        success: false,
+        message: "Address not found",
+      });
+    }
+
+    const updatedUser = await userModel.findByIdAndUpdate(
+      userId,
+      { $pull: { address: addressId } },
+      { new: true }
+    )
+
+    res.status(200).json({
+      success: true,
+      message: "Address removed successfully",
+      user: updatedUser,
+    });
+
+  } catch (err) {
+    res.status(500).json({
+      success: false,
+      message: err.message || "Something went wrong",
+    });
+  }
+};
+
+
 const getUser = async (req,res) =>{
   try {
     const users = await userModel.find({})
@@ -913,6 +963,7 @@ export const deleteUser = async (req, res) => {
     getUser,
     refreshToken,
     editAddress,
+    removeAddress,
   }
 
   

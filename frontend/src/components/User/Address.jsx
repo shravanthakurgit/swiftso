@@ -4,11 +4,19 @@ import { useUserData } from "../../context/UserContext";
 import EditAddress from "./EditAddress";
 import { MdEdit } from "react-icons/md";
 import { IoMdTrash } from "react-icons/io";
+import ConfirmAlert from "../../utils/ConfirmAlert";
+import { toast } from "react-toastify";
+import axiosInstance from "../../api/axiosInstance";
+
 
 const Address = () => {
-  const { userAddress, selectedAddress, setSelectedAddress } = useUserData();
+  const { userAddress, selectedAddress, setSelectedAddress,fetchUserDetails } = useUserData();
   const [openEdit, setOpenEdit] = useState(false);
   const [editData, setEditData] = useState({});
+  const [showAlert, setShowAlert]=useState(false)
+  const [addressId, setAddressId] = useState(null)
+
+
 
   const [selectedAddressIndex, setSelectedAddressIndex] = useState(null);
 
@@ -18,6 +26,27 @@ const Address = () => {
   //     setSelectedAddressIndex(parseInt(savedIndex)); // ensure it's a number
   //   }
   // }, []);
+
+   const handleRemove = async (addressId) => {
+    // e.preventDefault();
+    setShowAlert(false);
+    try {
+      const response = await axiosInstance.delete(`/api/user/remove-address`, {
+  data: { addressId },
+  withCredentials: true,
+});
+
+      if(response){
+        toast.success(response?.data?.message)
+        fetchUserDetails ();
+      }
+    
+    } catch (error) {
+      setShowAlert(false);
+      toast.error(error?.message || 'Something Went Wrong')
+     
+    }
+  };
 
   useEffect(() => {
     if (selectedAddressIndex !== null) {
@@ -89,12 +118,19 @@ const Address = () => {
                     <MdEdit />
                   </button>
 
-                  <button className="bg-red-200 bg-opacity-90 text-red-700 p-[4px] rounded-full ">
+
+
+                  <button onClick={()=> {
+                    setAddressId(add._id)
+                    setShowAlert(true)
+                    }} className="bg-red-200 bg-opacity-90 text-red-700 p-[4px] rounded-full ">
                     <IoMdTrash />
                   </button>
                 </div>
               </label>
             ))}
+
+            {showAlert && (<ConfirmAlert message='Are you sure want to remove address ?' hideAlert={()=>setShowAlert(false)} runFunction={()=> handleRemove(addressId)}/>)}
 
             {openEdit && (
               <EditAddress

@@ -1,5 +1,5 @@
 import express from 'express';
-import { loginUser,registerUser,adminLogin,productManageUser, verifyEmailController, logoutController, updateUserDetails, forgotPassword, verifyOTP, resetPassword, removeUser, getUserDetails, addAddress, getUser, refreshToken, editAddress, updateUserRole, updateUserStatus, deleteUser, resendVerificationEmail } from '../controllers/userController.js';
+import { loginUser,registerUser,adminLogin,productManageUser, verifyEmailController, logoutController, updateUserDetails, forgotPassword, verifyOTP, resetPassword, removeUser, getUserDetails, addAddress, getUser, refreshToken, editAddress, updateUserRole, updateUserStatus, deleteUser, resendVerificationEmail, removeAddress } from '../controllers/userController.js';
 import auth from '../middleware/auth.js';
 import authAdmin from '../middleware/authAdmin.js';
 
@@ -26,5 +26,6 @@ userRouter.post('/refresh-token',refreshToken)
 userRouter.put('/update-role/:userId/role',authAdmin,updateUserRole)
 userRouter.put('/update-status/:userId/status',authAdmin,updateUserStatus)
 userRouter.delete('/delete-user/:userId',authAdmin,deleteUser)
+userRouter.delete('/remove-address',auth,removeAddress)
 
 export default userRouter;

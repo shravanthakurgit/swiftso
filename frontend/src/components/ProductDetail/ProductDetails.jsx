@@ -30,7 +30,6 @@ import { toast } from "react-toastify";
 import ConfirmAlert from "../../utils/ConfirmAlert";
 
 
-
 const renderStars = (rating) => {
   const stars = [];
   for (let i = 1; i <= 5; i++) {
@@ -89,7 +88,9 @@ const renderUserStars = (rating) => {
   return stars;
 };
 
+
 const ProductDetails = () => {
+  const {isAuthenticated} = useAuth();
   const { likedItems, toggleLike } = useContext(LikedContext);
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
@@ -408,7 +409,7 @@ const handleAddToCart = async () => {
 )}
 
               
-{review.userId?._id && String(review.userId._id) === String(currentUserId) && (
+{review.userId?._id && String(review.userId._id) === String(currentUserId)   && (
   <button
     onClick={() => setShowAlert(true)}
     className="gap-2 justify-between flex items-center flex-wrap poppins text-[8px] font-semibold mt-2 absolute right-2 top-0  text-gray-700 bg-gray-200 p-1 rounded-full"
