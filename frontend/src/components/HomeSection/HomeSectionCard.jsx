@@ -12,9 +12,9 @@ const HomeSectionCard = ({ title1, title2, Category }) => {
     (product) => product.category.toLowerCase() === Category.toLowerCase()
   );
 
-  if (!isOnline || loading) {
+  if (loading) {
     return (
-      <div className="flex flex-col mt-10 px-4">
+      <div className="flex flex-col mt-10 ">
         <Title title1={title1} title2={title2} />
 
         <div className="flex flex-wrap justify-center gap-1 ">

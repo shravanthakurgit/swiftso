@@ -167,7 +167,7 @@ const productsPerPage = 25;
     setSortOption(sortQuery);
   }, [location.search]);
 
-  if (!isOnline || loading) {
+  if (loading) {
     return <CardEffect />;
   }
 
