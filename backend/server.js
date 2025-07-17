@@ -22,7 +22,7 @@ app.set('trust proxy', 1);
 connectDB();
 connectCloudinary();
 
-app.use('/invoices', express.static(path.join(process.cwd(), 'invoices')));
+
 
 // Middleware
 const allowedOrigins = [
@@ -30,6 +30,7 @@ const allowedOrigins = [
   process.env.ADMIN_FRONTEND_URL,
 ];
 
+// CORS: allow specific origins
 app.use(cors({
   origin: function (origin, callback) {
     if (!origin || allowedOrigins.includes(origin)) {
@@ -42,12 +43,23 @@ app.use(cors({
   optionsSuccessStatus: 200, 
 }));
 
-// app.options('*', cors());
+// 🔧 Preflight OPTIONS handler — very important!
+app.options('*', cors({
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+    console.warn(`CORS blocked origin: ${origin}`);
+    return callback(new Error('Not allowed by CORS'));
+  },
+  credentials: true,
+  optionsSuccessStatus: 200,
+}));
 
+// Body parsers and other middleware
 app.use(express.json());
-
-//cookies parser
 app.use(cookieParser());
+
 
 // Use body-parser
 
@@ -70,6 +82,8 @@ app.use('/api/coupons', couponRouter);
 app.use('/api/product', productRouter);
 app.use('/api/cart', cartRouter);
 app.use('/api/order', orderRouter);
+
+app.use('/invoices', express.static(path.join(process.cwd(), 'invoices')));
 
 // Root
 app.get('/', (req, res) => {
