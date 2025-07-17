@@ -167,7 +167,7 @@ const ProductDetails = () => {
   );
   const isVariantOutOfStock = selectedVariant?.stock === 0;
 
-  const { addToCart } = useCart();
+  const { addToCart,addToCartLoading} = useCart();
 
 const handleAddToCart = async () => {
   if (!selectedVariant) return;
@@ -190,7 +190,7 @@ const handleAddToCart = async () => {
   setIsAdded(true);
   setTimeout(() => {
     setIsAdded(false);
-  }, 2000);
+  }, 1500);
 };
 
   if (!productData) return <Error message='Somting Went Wrong'/>;
@@ -328,21 +328,23 @@ const handleAddToCart = async () => {
         <div className="mt-4 mb-6 flex flex-wrap gap-3 max-w-md flex-col md:flex-row mx-auto">
 
 
-          <button
-            className={`p-2 font-semibold rounded flex-1 text-white border border-white shadow-sm ${
-              isOutOfStock || isVariantOutOfStock
-                ? "bg-slate-400 cursor-not-allowed"
-                : "bg-black hover:bg-gray-900"
-            }`}
-            disabled={!selectedVariant || isVariantOutOfStock}
-            onClick={() => handleAddToCart()}
-          >
-            {isOutOfStock || isVariantOutOfStock
-              ? "Out of Stock"
-              : !selectedVariant
-              ? "Select Size to Add"
-              : "Add To Cart"}
-          </button>
+         <button
+  className={`p-2 font-semibold rounded flex-1 text-white border border-white shadow-sm ${
+    isOutOfStock || isVariantOutOfStock
+      ? "bg-slate-400 cursor-not-allowed"
+      : "bg-black hover:bg-gray-900"
+  }`}
+  disabled={!selectedVariant || isVariantOutOfStock || addToCartLoading}
+  onClick={handleAddToCart}
+>
+  {isOutOfStock || isVariantOutOfStock
+    ? "Out of Stock"
+    : !selectedVariant
+    ? "Select Size to Add"
+    : addToCartLoading
+    ? "Adding to Cart..."
+    : "Add To Cart"}
+</button>
 
           <div
             onClick={() => toggleLike(productData._id)}

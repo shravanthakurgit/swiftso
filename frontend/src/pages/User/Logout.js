@@ -5,6 +5,7 @@ import { useAuth } from '../../context/AuthContext';
 import { backendUrl } from '../../utils/backendUrl';
 import { LikedContext } from '../../context/LikedContext';
 import { toast } from 'react-toastify';
+// import { useCart } from '../../context/CartContext';
 
 
 
@@ -22,10 +23,9 @@ setLoading(true)
         await axios.post(`${backendUrl}/api/user/logout`, {}, {
           withCredentials: true,
         });
-         localStorage.removeItem("accessToken");
-      localStorage.removeItem("refreshToken");
+        localStorage.clear();
 
-      setIsAuthenticated(false);
+setIsAuthenticated(false);
       navigate("/");
       } catch (err) {
         toast.error("Error logging out:", err);

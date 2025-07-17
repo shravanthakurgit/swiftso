@@ -13,7 +13,7 @@ const DELIVERY_FEE_THRESHOLD = parseFloat(process.env.REACT_APP_DELIVERY_FEE_THR
 
 
 const CartPage = () => {
-  const { cart, updateCartItem,removeFromCart} = useCart();
+  const { cart, updateCartItem,removeFromCart,updateCartLoading,removeFromCartLoading} = useCart();
   // const { getTotalQuantity } = useCart();
   // const cartQuantity = getTotalQuantity();
 
@@ -132,11 +132,35 @@ const items = cart.map(item => ({
 
 
   return (
-    <div className="p-4 mx-auto relative w-full">
+    
+    <div className="p-4 mx-auto w-full">
+
+       {updateCartLoading &&(
+         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-20 backdrop-blur-xs p-5 ">
+      <div className=" max-w-sm bg-white monst p-2 shadow-lg overflow-hidden border border-gray-100 flex items-center gap-6 justify-center w-fit px-4 font-semibold text-sm rounded text-gray-600">
+<p>Updating items...</p> <div className="animate-spin rounded-full h-4 w-4 border-t border-b border-black mt-1 "></div>
+        
+      </div>
+    </div>
+      )}
+
+
+       {removeFromCartLoading &&(
+         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-20 backdrop-blur-xs p-5 ">
+      <div className=" max-w-sm bg-white monst p-2 shadow-lg overflow-hidden border border-gray-100 flex items-center gap-6 justify-center w-fit px-4 font-semibold text-sm rounded text-gray-600">
+<p>Removing item...</p> <div className="animate-spin rounded-full h-4 w-4 border-t border-b border-black mt-1 "></div>
+        
+      </div>
+    </div>
+      )}
+
       <div className="flex flex-row justify-start bg-white border-b items-center p-4 top-[100px] fixed z-10 w-full left-0 gap-3">
         <p><BsCart3 /></p>
         <p className='text-sm font-semibold'>CART</p>
       </div>
+
+
+     
 
       {cart?.length === 0 ? (
         <p className="text-gray-500 mt-20 monst">Your cart is empty.</p>

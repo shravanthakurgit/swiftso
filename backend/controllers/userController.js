@@ -773,7 +773,7 @@ const removeAddress = async (req, res) => {
       });
     }
 
-    // Delete the address document
+    
     const removedAddress = await addressModel.findByIdAndDelete(addressId);
 
     if (!removedAddress) {

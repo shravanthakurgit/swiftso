@@ -11,6 +11,11 @@ export const CartProvider = ({ children }) => {
   const [cart, setCart] = useState([]);
   const [loading, setLoading] = useState(true);
   const { isAuthenticated } = useAuth();
+const [addToCartLoading, setAddToCartLoading] = useState(false);
+const [removeFromCartLoading, setRemoveFromCartLoading] = useState(false);
+const [updateCartLoading, setUpdateCartLoading] = useState(false);
+
+
 
   const saveLocalCart = (items) => {
     localStorage.setItem(LOCAL_CART_KEY, JSON.stringify(items));
@@ -80,6 +85,7 @@ export const CartProvider = ({ children }) => {
     }
 
     try {
+        setAddToCartLoading(true);
       await axiosInstance.post("/api/cart/add", item, {
         withCredentials: true,
       });
@@ -87,7 +93,9 @@ export const CartProvider = ({ children }) => {
     } catch (error) {
       // toast.error(error?.response?.data?.message || error?.message || "Something went wrong");
       return null;
-    }
+    } finally {
+    setAddToCartLoading(false);
+  }
   };
 
   const removeFromCart = async (productId, size) => {
@@ -100,6 +108,7 @@ export const CartProvider = ({ children }) => {
     }
 
     try {
+        setRemoveFromCartLoading(true);
       await axiosInstance.delete("/api/cart/remove", {
         data: { productId, size },
         withCredentials: true,
@@ -108,7 +117,9 @@ export const CartProvider = ({ children }) => {
     } catch (error) {
       // toast.error(error?.response?.data?.message || error?.message || "Something went wrong");
       return null;
-    }
+    } finally {
+    setRemoveFromCartLoading(false);
+  }
   };
 
   const updateCartItem = async (productId, size, quantity) => {
@@ -123,6 +134,7 @@ export const CartProvider = ({ children }) => {
     }
 
     try {
+      setUpdateCartLoading(true);
       await axiosInstance.put(
         "/api/cart/update-quantity",
         { productId, size, quantity },
@@ -132,7 +144,9 @@ export const CartProvider = ({ children }) => {
     } catch (error) {
       // toast.error(error?.response?.data?.message || error?.message || "Something went wrong");
       return null;
-    }
+    }finally {
+    setUpdateCartLoading(false);
+  }
   };
 
   const clearCart = async () => {
@@ -163,6 +177,9 @@ export const CartProvider = ({ children }) => {
         updateCartItem,
         clearCart,
         refreshCart: fetchCart,
+        addToCartLoading,
+    removeFromCartLoading,
+    updateCartLoading,
       }}
     >
       {children}
