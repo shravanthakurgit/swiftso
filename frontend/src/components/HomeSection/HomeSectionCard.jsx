@@ -14,7 +14,7 @@ const HomeSectionCard = ({ title1, title2, Category }) => {
     (product) => product.category.toLowerCase() === Category.toLowerCase()
   ) || [];
 
-  const limitedProducts = productsList.slice(0, 12);
+  const limitedProducts = productsList.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)).slice(0, 12);
 
   if (loading) {
     return (
