@@ -5,7 +5,7 @@ const authAdmin = (req, res, next) => {
    
     const authHeader = req.headers.authorization || req.headers.token;
 
-    // console.log("Authorization Header:", authHeader); // Debug
+  
 
     if (!authHeader) {
       return res.status(401).json({ success: false, message: "No Token Found!" });

@@ -281,7 +281,6 @@ const adminLogin = async (req, res) => {
     const token = jwt.sign(payload, process.env.REFRESH_SECRET, {
       expiresIn: process.env.REFRESH_TOKEN_EXPIRY || '2d',
     });
-    console.log(token)
 
     return res.status(200).json({ success: true, token });
   } catch (error) {

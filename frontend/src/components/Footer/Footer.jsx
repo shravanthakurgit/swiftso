@@ -8,6 +8,9 @@ const Footer = () => {
 
 
   const {userData}= useAuth();
+
+  console.log(userData.role);
+  
   return (
     <div className='w-full border-t mt-8 z-50 bottom-0'>
 
@@ -48,7 +51,7 @@ const Footer = () => {
 
 
 
-{userData?.role === "admin" || userData?.role === "manager" || userData?.role === "staff"  && (
+{(userData?.role === "admin" || userData?.role === "manager" || userData?.role === "staff" ) && (
   <li className="mb-4 text-[5px]">
     <a
       href={process.env.REACT_APP_ADMIN_URL}
