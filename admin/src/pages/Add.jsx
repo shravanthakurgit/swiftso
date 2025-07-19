@@ -91,32 +91,45 @@ const [successMessage, setSuccessMessage] = useState('');
       formData.append(`image${index + 1}`, img);
     });
 
-    await axios.post(`${backendUrl}/api/product/add`, formData, {
+   const response =  await axios.post(`${backendUrl}/api/product/add`, formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
         Authorization: `Bearer ${token}`,
       },
     });
 
+    if(response){
+     setIsSubmitting(false);
+    
+
     setSuccessMessage('✅ Product added successfully!');
+
+    }
    
   } catch (err) {
     console.error(err.response?.data || err);
     alert('❌ Error saving product');
-  } finally {
-    setIsSubmitting(false);
   }
+    setIsSubmitting(false);
+  
 };
 
 
   return (
 
     <div>
-        {successMessage && (
-      <div className="bg-green-100 text-green-800 p-2 rounded mb-4 text-sm">
-        {successMessage}
-      </div>
-    )}
+     
+
+    {isSubmitting && (
+  <div className="fixed inset-0 bg-black bg-opacity-40 z-50 flex items-center justify-center">
+    <div className="bg-white px-6 py-4 rounded shadow-lg text-center">
+      <div className="animate-spin h-5 w-5 border-4 border-black border-t-transparent rounded-full mx-auto mb-3"></div>
+      <div className="text-lg font-semibold mb-1">Adding Product...</div>
+      <div className="text-sm text-gray-600">Please wait while we save your product.</div>
+    </div>
+  </div>
+)}
+
     <form onSubmit={handleSubmit} className="max-w-2xl mx-auto space-y-4" encType="multipart/form-data">
       {/* Inputs */}
       <input name="name" placeholder="Product Name" value={form.name} onChange={handleInput} className="w-full border p-2" />
@@ -182,7 +195,7 @@ const [successMessage, setSuccessMessage] = useState('');
         <label>Variants</label>
         {form.variants.map((variant, i) => (
           <div key={i} className="flex gap-2 mb-1">
-            <input value={variant.size} onChange={e => handleVariantChange(i, 'size', e.target.value)} placeholder="Size" className="w-1/4 border p-2" />
+            <input value={variant.size.toUpperCase()} onChange={e => handleVariantChange(i, 'size', e.target.value)} placeholder="Size" className="w-1/4 border p-2" />
             <input type="number" value={variant.stock} onChange={e => handleVariantChange(i, 'stock', e.target.value)} placeholder="Stock" className="w-1/4 border p-2" />
             <input type="number" value={variant.price} onChange={e => handleVariantChange(i, 'price', e.target.value)} placeholder="Price (optional)" className="w-1/4 border p-2" />
             <button type="button" onClick={() => removeVariant(i)} className="text-red-600">X</button>
@@ -214,7 +227,11 @@ const [successMessage, setSuccessMessage] = useState('');
       <label className="ml-4">
         <input type="checkbox" name="bestseller" checked={form.bestseller} onChange={handleInput} /> Bestseller
       </label>
-
+   {successMessage && (
+      <div className="bg-green-100 text-green-800 p-2 rounded mb-4 text-sm">
+        {successMessage}
+      </div>
+    )}
      <button
   type="submit"
   className="bg-black text-white px-4 py-2 mt-4"

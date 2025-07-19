@@ -36,10 +36,10 @@ const ProductList = ({token}) => {
         toast.success("Item removed successfully");
         fetchProducts();
       } else {
-        toast.error("Error removing product");
+        toast.error(response?.data?.message);
       }
     } catch (error) {
-      toast.error("Failed to remove product");
+      toast.error(error?.message ||"Faled To Reomve");
       console.log(error);
     }
   };

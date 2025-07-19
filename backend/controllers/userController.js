@@ -267,7 +267,7 @@ const adminLogin = async (req, res) => {
       return res.status(401).json({ success: false, message: "Invalid credentials" });
     }
 
-    const allowedRoles = ['admin', 'manager'];
+    const allowedRoles = ['admin', 'manager','staff'];
     if (!allowedRoles.includes(role)) {
       return res.status(403).json({ success: false, message: "Access denied: not an admin" });
     }
@@ -278,8 +278,8 @@ const adminLogin = async (req, res) => {
       role
     };
 
-    const token = jwt.sign(payload, process.env.ACCESS_SECRET, {
-      expiresIn: process.env.ACCESS_TOKEN_EXPIRY || '2h',
+    const token = jwt.sign(payload, process.env.REFRESH_SECRET, {
+      expiresIn: process.env.REFRESH_TOKEN_EXPIRY || '2d',
     });
     console.log(token)
 
@@ -879,6 +879,15 @@ export const updateUserRole = async (req, res) => {
     const { userId } = req.params;
     const { role } = req.body;
 
+         const adminUser = req.user
+       const adminRole = adminUser.role
+  if(adminRole !== 'admin'){
+    return res.json({
+      success:false,
+      message:'Only Admin Can Update Role'
+    })
+  }
+
     const validRoles = ["admin", "user", "staff", "manager"];
     if (!validRoles.includes(role)) {
       return res.status(400).json({ message: "Invalid role provided." });
@@ -892,7 +901,7 @@ export const updateUserRole = async (req, res) => {
     user.role = role;
     await user.save();
 
-    res.status(200).json({ message: "User role updated successfully", user });
+    res.status(200).json({success:true, message: "User role updated successfully", user });
   } catch (err) {
     console.error("Error updating user role:", err);
     res.status(500).json({ message: "Server error" });
@@ -902,6 +911,15 @@ export const updateUserRole = async (req, res) => {
 
 export const updateUserStatus = async (req, res) => {
   try {
+        const adminUser = req.user
+       const adminRole = adminUser.role
+  if(adminRole !== 'admin'){
+    return res.json({
+      success:false,
+      message:'Only Admin Can Update Status'
+    })
+  }
+
     const { userId } = req.params;
     const { status } = req.body;
 
@@ -928,6 +946,15 @@ export const updateUserStatus = async (req, res) => {
 
 export const deleteUser = async (req, res) => {
   try {
+        const adminUser = req.user
+       const adminRole = adminUser.role
+  if(adminRole !== 'admin'){
+    return res.json({
+      success:false,
+      message:'Only Admin Can Delete User'
+    })
+  }
+
     const { userId } = req.params;
 
     const user = await userModel.findByIdAndDelete(userId);

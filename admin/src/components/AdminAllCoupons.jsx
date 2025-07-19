@@ -3,6 +3,7 @@ import axios from "axios";
 import { Link } from "react-router-dom";
 // import { token } from "../utils/token";
 import { backendUrl } from "../App";
+import {toast} from "react-toastify";
 
 const AdminAllCoupons = ({token}) => {
   const [coupons, setCoupons] = useState([]);
@@ -26,11 +27,20 @@ const AdminAllCoupons = ({token}) => {
     if (!confirmed) return;
 
     try {
-      await axios.delete(`${backendUrl}/api/coupons/${id}`, {
+      const response = await axios.delete(`${backendUrl}/api/coupons/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      setCoupons((prev) => prev.filter((c) => c._id !== id));
-      alert("Coupon deleted!");
+
+      if(response?.data?.success){
+       toast.success(response?.data?.message || "Coupon Deleted");
+        setCoupons((prev) => prev.filter((c) => c._id !== id));
+     }
+     else{
+       toast.error(response?.data?.message || "Failed To Delete");
+     }
+
+     
+     
     } catch (err) {
       console.error("Delete failed:", err);
       alert("Failed to delete coupon.");

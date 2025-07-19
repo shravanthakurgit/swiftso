@@ -97,8 +97,16 @@ const addProduct = async (req, res) => {
 
 
 const removeProduct = async(req,res)=>{
-
     try {
+
+       const user = req.user
+       const role = user.role
+  if(role !== 'admin'){
+    return res.json({
+      success:false,
+      message:'Only Admin Can Remove Product'
+    })
+  }
         await productModel.findByIdAndDelete(req.body.id);
         res.json({success:true,message:"product removed"})
     }

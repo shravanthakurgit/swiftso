@@ -10,6 +10,15 @@ const couponRouter = express.Router();
 // Admin creates a coupon
 couponRouter.post('/', authAdmin, async (req, res) => {
   try {
+         const user = req.user
+       const role = user.role
+       console.log(user)
+  if(role !== 'admin'){
+    return res.json({
+      success:false,
+      message:'Only Admin Can Add Coupon'
+    })
+  }
     const coupon = new couponModel(req.body);
     await coupon.save();
     res.status(201).json({ success: true, message: 'Coupon added successfully! ' });
@@ -110,6 +119,14 @@ return res.json({
 
 couponRouter.delete('/:id', authAdmin, async (req, res) => {
   try {
+         const user = req.user
+       const role = user.role
+  if(role !== 'admin'){
+    return res.json({
+      success:false,
+      message:'Only Admin Can Remove Coupon'
+    })
+  }
     await couponModel.findByIdAndDelete(req.params.id);
     res.json({ success: true, message: 'Coupon deleted successfully.' });
   } catch (err) {
@@ -120,7 +137,7 @@ couponRouter.delete('/:id', authAdmin, async (req, res) => {
 
 
 
-couponRouter.get('/admin-get-all', getAllCoupons);
-couponRouter.put('/admin-update/:id', updateCoupon);
+couponRouter.get('/admin-get-all',authAdmin, getAllCoupons);
+couponRouter.put('/admin-update/:id',authAdmin, updateCoupon);
 
 export default couponRouter;

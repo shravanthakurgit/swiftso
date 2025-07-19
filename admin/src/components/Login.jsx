@@ -3,12 +3,15 @@ import axios from 'axios';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { backendUrl } from "../App";
+import { getCurrentUser } from "../utils/token";
 
 const adminUrl = import.meta.env.VITE_ADMIN_URL;
 
 export default function Login({ setToken }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+
+  const user = getCurrentUser();
 
   const onSubmitHandler = async (e) => {
     e.preventDefault();
@@ -17,6 +20,7 @@ export default function Login({ setToken }) {
       
 
       if (response.data.success) {
+        window.location.reload();
         setToken(response.data.token);
         toast.success("Login successful!");
       } else {
@@ -27,8 +31,9 @@ export default function Login({ setToken }) {
       toast.error(error.response?.data?.message || error.message || "An error occurred.");
     }
   };
-
-  return (
+  
+return (
+  user === null ? (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4">
       <ToastContainer />
       <div className="w-full max-w-sm bg-white rounded-md shadow-md p-6 space-y-6">
@@ -76,5 +81,8 @@ export default function Login({ setToken }) {
         </form>
       </div>
     </div>
-  );
+  ) : null
+);
+
+ 
 }

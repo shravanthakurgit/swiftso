@@ -351,6 +351,7 @@ export const getSingleOrder = async (req,res)=>{
 }
 
 export const updateStatus = async (req,res)=>{
+  
     try {
         const userId = req.userId
         const {orderId,status}= req.body
@@ -393,6 +394,14 @@ export const updateStatus = async (req,res)=>{
 
 export const updateStatusAdmin = async (req,res)=>{
     try {
+           const user = req.user
+       const role = user.role
+  if(role !== 'admin'){
+    return res.json({
+      success:false,
+      message:'Only Admin Can Update Status'
+    })
+  }
         const {orderId,status}= req.body
           if(!orderId){
             return res.status(401).json({

@@ -45,14 +45,20 @@ const AdminEditCoupon = ({token}) => {
   const onSubmit = async (data) => {
     setLoading(true);
     try {
-      await axios.put(`${backendUrl}/api/coupons/admin-update/${id}`, data, {
+     const response = await axios.put(`${backendUrl}/api/coupons/admin-update/${id}`, data, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      alert("Coupon updated successfully!");
+      if(response?.data?.success){
+ toast.success(response?.data?.message || "Coupon updated successfully!");
       navigate("/admin/all-coupons");
+      }
+      else{
+         toast.error(response?.data?.message || "Update Failed!");
+      }
+     
     } catch (err) {
       console.error(err);
-      alert("Failed to update coupon.");
+      toast.error(err?.message);
     } finally {
       setLoading(false);
     }

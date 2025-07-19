@@ -38,8 +38,13 @@ export default function UserList({ token }) {
 
   const handleRoleSave = async (userId) => {
     try {
-      await axios.put(`${backendUrl}/api/user/update-role/${userId}/role`, { role: newRole }, config);
-      toast.success("Role updated");
+      const response = await axios.put(`${backendUrl}/api/user/update-role/${userId}/role`, { role: newRole }, config);
+     if(response?.data?.success){
+       toast.success(response?.data?.message || "Role updated");
+     }
+     else{
+       toast.error(response?.data?.message || "Failed Updating Role");
+     }
       setEditingRoleId(null);
       fetchUsers();
     } catch (err) {
@@ -49,8 +54,13 @@ export default function UserList({ token }) {
 
   const handleStatusSave = async (userId) => {
     try {
-      await axios.put(`${backendUrl}/api/user/update-status/${userId}/status`, { status: newStatus }, config);
-      toast.success("Status updated");
+      const response =await axios.put(`${backendUrl}/api/user/update-status/${userId}/status`, { status: newStatus }, config);
+      if(response?.data?.success){
+       toast.success(response?.data?.message || "Status updated");
+     }
+     else{
+       toast.error(response?.data?.message || "Failed Updating Status");
+     }
       setEditingStatusId(null);
       fetchUsers();
     } catch (err) {
@@ -61,9 +71,17 @@ export default function UserList({ token }) {
   const handleDelete = async (userId) => {
     if (!window.confirm("Are you sure you want to delete this user?")) return;
     try {
-      await axios.delete(`${backendUrl}/api/user/delete-user/${userId}`, config);
-      toast.success("User deleted");
-      setUsers((prev) => prev.filter((user) => user._id !== userId));
+     const response = await axios.delete(`${backendUrl}/api/user/delete-user/${userId}`, config);
+
+      if(response?.data?.success){
+       toast.success(response?.data?.message || "User Deleted");
+       setUsers((prev) => prev.filter((user) => user._id !== userId));
+     }
+     
+     else{
+       toast.error(response?.data?.message || "Failed To Remove User");
+     }
+      
     } catch (err) {
       toast.error(err.response?.data?.message || err.message);
     }

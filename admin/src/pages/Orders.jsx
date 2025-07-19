@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from 'axios';
 import { backendUrl } from "../App";
+import { toast } from "react-toastify";
 // import { getToken } from "../utils/token";
 
 
@@ -38,7 +39,7 @@ const handleStatusUpdate = async (orderId, newStatus) => {
   if (!confirm) return;
 
   try {
-    await axios.put(`${backendUrl}/api/order/admin-update-status`, {
+  const response =  await axios.put(`${backendUrl}/api/order/admin-update-status`, {
       orderId,
       status: newStatus,
     }, {
@@ -47,11 +48,18 @@ const handleStatusUpdate = async (orderId, newStatus) => {
       },
     });
 
-    setOrders((prev) =>
+     if (response?.data?.success) {
+        toast.success(response?.data?.message || "Status Updated SuccessFully");
+        setOrders((prev) =>
       prev.map((order) =>
         order.orderId === orderId ? { ...order, order_status: newStatus } : order
       )
     );
+      } else {
+        toast.error(response?.data?.message);
+      }
+
+    
   } catch (error) {
     alert("Failed to update status");
   }

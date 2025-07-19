@@ -13,6 +13,14 @@ export const getAllCoupons = async (req, res) => {
 export const updateCoupon = async (req, res) => {
   try {
     const { id } = req.params;
+         const user = req.user
+       const role = user.role
+  if(role !== 'admin'){
+    return res.json({
+      success:false,
+      message:'Only Admin Can update Coupon'
+    })
+  }
     const updateFields = req.body;
 
     const updatedCoupon = await  couponModel.findByIdAndUpdate(id, updateFields, {
