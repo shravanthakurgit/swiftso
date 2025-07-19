@@ -14,7 +14,14 @@ const HomeSectionCard = ({ title1, title2, Category }) => {
     (product) => product.category.toLowerCase() === Category.toLowerCase()
   ) || [];
 
-  const limitedProducts = productsList.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)).slice(0, 12);
+const limitedProducts = productsList
+  .sort((a, b) => {
+    const dateA = new Date(a.createdAt || a.date || a._id);
+    const dateB = new Date(b.createdAt || b.date || b._id);
+    return dateB - dateA; 
+  })
+  .slice(0, 12);
+
 
   if (loading) {
     return (

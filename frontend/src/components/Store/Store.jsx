@@ -148,19 +148,29 @@ const productsPerPage = 25;
   };
 
   const sortedProducts = [...filteredProducts].sort((a, b) => {
-    switch (sortOption) {
-      case "low-high":
-        return a.price - b.price;
-      case "high-low":
-        return b.price - a.price;
-      case "newest":
-        return new Date(b.createdAt) - new Date(a.createdAt);
-      case "best-rating":
-        return b.rating - a.rating;
-      default:
-        return 0;
-    }
-  });
+  const dateA = new Date(a.createdAt || a.date || a._id);
+  const dateB = new Date(b.createdAt || b.date || b._id);
+
+  switch (sortOption) {
+    case "low-high":
+      return a.price - b.price;
+
+    case "high-low":
+      return b.price - a.price;
+
+    case "newest":
+      return dateB - dateA;
+
+    case "best-rating":
+      return (b.rating || 0) - (a.rating || 0);
+
+    default:
+      return 0;
+  }
+});
+
+
+
 
   useEffect(() => {
     const sortQuery = searchParams.get("sort") || "relevant";
