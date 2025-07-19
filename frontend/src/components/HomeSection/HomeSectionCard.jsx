@@ -40,7 +40,7 @@ const HomeSectionCard = ({ title1, title2, Category }) => {
         ))}
       </div>
 
-      {productsList.length > 12 && (
+      {productsList.length > 0 && (
         <Link
           to="/shop"
           className="mt-4 px-6 py-2 border border-gray-300 rounded-full text-sm text-gray-700 hover:bg-black hover:text-white transition duration-300 monst flex gap-2 items-center linkc"
