@@ -19,13 +19,14 @@ const Navbar = ({ setToken, onMenuClick }) => {
   };
   return (
 
-user !== null ? (  <nav className="flex items-center justify-between p-4 bg-white shadow">
+user !== null ? (  <nav className="flex items-center justify-between p-4 bg-white shadow ">
       <div className="flex items-center gap-4">
         <button className="md:hidden" onClick={onMenuClick}>
           <FiMenu className="text-2xl" />
         </button>
         <h1 className="text-lg font-semibold">Admin Panel</h1>
-        <div className="flex flex-wrap text-sm gap-6">
+        
+        <div className="flex flex-wrap text-sm gap-6 flex-col">
 <p><span className="font-semibold text-blue-600">Email: </span>{user?.email}</p>
 <p className="capitalize"><span className="font-semibold text-blue-600">Role: </span> {user?.role}</p>
         </div>
