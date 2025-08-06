@@ -41,7 +41,7 @@ const limitedProducts = productsList
     <div className="flex flex-col mt-10 items-center">
       <Title title1={title1} title2={title2} />
 
-      <div className="flex flex-wrap justify-center gap-3">
+      <div className="flex flex-wrap justify-center gap-1">
         {limitedProducts.map((product) => (
           <ProductCard key={product._id} product={product} basePath="/shop" />
         ))}

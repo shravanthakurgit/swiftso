@@ -27,7 +27,7 @@ const productSlug = slugify(`${product.name} ${product.subCategory}`);
           <img
             className="w-full h-[230px] object-top rounded object-cover m-auto"
             src={product.images[0]}
-            alt={product.name}
+            // alt={product.name}
           />
 
           <div className="my-1">
