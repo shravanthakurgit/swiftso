@@ -28,7 +28,7 @@ import ShareProduct from "../../utils/ShareProduct";
 import ShopByCategory from "../Category/ShopByCategory";
 import { toast } from "react-toastify";
 import ConfirmAlert from "../../utils/ConfirmAlert";
-
+import { Loader2 } from "lucide-react";
 
 const renderStars = (rating) => {
   const stars = [];
@@ -193,7 +193,7 @@ const handleAddToCart = async () => {
   }, 1500);
 };
 
-  if (!productData) return <p>Please Wait...</p>;
+  if (!productData) return <div className='mt-6'><Loader2 size={32} className="animate-spin mt-1"/></div>;
 
   const displayedPrice =
     selectedVariant?.price > 0 ? selectedVariant.price : productData.price;
