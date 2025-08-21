@@ -193,7 +193,7 @@ const handleAddToCart = async () => {
   }, 1500);
 };
 
-  if (!productData) return <Error message='Somting Went Wrong'/>;
+  if (!productData) return <p>Please Wait...</p>;
 
   const displayedPrice =
     selectedVariant?.price > 0 ? selectedVariant.price : productData.price;
