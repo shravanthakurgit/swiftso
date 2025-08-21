@@ -193,7 +193,9 @@ const handleAddToCart = async () => {
   }, 1500);
 };
 
-  if (!productData) return <div className='mt-6'><Loader2 size={32} className="animate-spin mt-1"/></div>;
+  if (!productData) return <div className="flex items-center justify-center h-full">
+  <Loader2 size={32} className="animate-spin" />
+</div>;
 
   const displayedPrice =
     selectedVariant?.price > 0 ? selectedVariant.price : productData.price;
