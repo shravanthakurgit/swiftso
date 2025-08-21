@@ -12,6 +12,7 @@ import orderRouter from './routes/orderRouter.js';
 import path from 'path';
 import rateLimit from 'express-rate-limit';
 dotenv.config();
+import axios from 'axios';
 
 
 const app = express();
@@ -75,6 +76,23 @@ app.use('/api/order', orderRouter);
 app.get('/', (req, res) => {
   res.send("API is working!" + process.env.FRONTEND_URL);
 });
+
+// bypassing render server delay for 1 minute
+const url = `https://swiftso-backend.onrender.com`
+const interval = 40000;
+
+function reloadWebsite() {
+  axios
+    .get(url)
+    .then((response) => {
+      console.log("website reloded");
+    })
+    .catch((error) => {
+      console.error(Error : ${error.message});
+    });
+}
+
+setInterval(reloadWebsite, interval);
 
 app.listen(port, async () => {
   console.log(`Express server is listening on port ${port}`);
